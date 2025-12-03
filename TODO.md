@@ -2,7 +2,7 @@
 
 ## Establishing Core Repo
 
-- [ ] Transfer over analysis for FireplaceSlider from old reppo
+- [ ] Transfer over analysis for FireplaceSlider from old repo
 
 ## Cleanup / Enhancement
 
@@ -13,6 +13,7 @@
 - [ ] Include print logs that indicate success and actions
 - [ ] Add reasonable headers and filenames
 - [ ] Create folders if not existing
+- [x] Add .env.examples 
 
 ## Experimentation Next Steps
 
