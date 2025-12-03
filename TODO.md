@@ -2,12 +2,12 @@
 
 ## Establishing Core Repo
 
-- [ ] Transfer over analysis for FireplaceSlider from old reppo
+- [ ] Transfer over analysis for FireplaceSlider from old repo
 
 ## Cleanup / Enhancement
 
-- [ ] Remove unused files from Next.js apps
-- [ ] Add .env.examples 
+- [x] Remove unused files from Next.js apps
+- [x] Add .env.examples 
 
 ## Experimentation Next Steps
 
