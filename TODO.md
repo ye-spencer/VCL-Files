@@ -6,8 +6,13 @@
 
 ## Cleanup / Enhancement
 
-- [ ] Remove unused files from Next.js apps
-- [ ] Add .env.examples 
+- [x] Remove unused files from Next.js apps
+- [x] Add .env.examples
+- [ ] Verify correctness of everything
+- [ ] Add requirements/dependencies files (npm, pip)
+- [ ] Include print logs that indicate success and actions
+- [ ] Add reasonable headers and filenames
+- [ ] Create folders if not existing
 
 ## Experimentation Next Steps
 
