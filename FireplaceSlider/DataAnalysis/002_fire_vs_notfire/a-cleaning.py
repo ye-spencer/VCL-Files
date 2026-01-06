@@ -15,8 +15,6 @@ print(f"Number of invalid prolific IDs: {len(invalid_counts)}")
 ### Drop rows where prolific_id is not in valid_counts
 df = df[df['prolific_id'].isin(valid_counts.index)]
 
-print(f"Number of rows dropped: {len(df) - len(valid_counts)}")
-
 ## Check if all prolific_ids have consistent values for session_id, x, y, word_one, and word_two, as they should all be the same for each prolific_id ###
 for col in ['session_id', 'x', 'y', 'word_one', 'word_two']:
     # Group by prolific_id and check if there's more than one unique value per group
