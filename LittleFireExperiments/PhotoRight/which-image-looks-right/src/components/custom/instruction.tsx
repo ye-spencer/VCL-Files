@@ -25,7 +25,7 @@ export default function Instruction() {
     return (
         <div className="px-8 pt-10 pb-4 text-lg">
             <div dangerouslySetInnerHTML={{ __html: instruction }} />
-            {INSTRUCTION_LEVEL === END_LEVEL && <a href="https://app.prolific.com/submissions/complete?cc=C1MRKKO5" className="text-blue-500 hover:text-blue-700 font-bold"> Please click this link to return to Prolific.</a>}
+            {INSTRUCTION_LEVEL === END_LEVEL && <a href="https://app.prolific.com/submissions/complete?cc=C227MRG1" className="text-blue-500 hover:text-blue-700 font-bold"> Please click this link to return to Prolific.</a>}
         </div>
     )
 }
