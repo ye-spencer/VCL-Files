@@ -5,6 +5,9 @@ import Instruction from "./components/instruction";
 import Trial from "./components/trial";
 import EndScreen from "./components/endscreen";
 import { getInstruction, getPostPracticeInstruction, getTrialType, getInstructionWaitDelayMS, getPostPracticeInstructionWaitDelayMS } from "./lib/helpers";
+import { generatePracticeTrialParameters, generateTrialParameters } from "./services/experimentData.service";
+import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS } from "./lib/constants";
+import { trialParameters } from "./lib/types";
 
 export default function Home() {
 
@@ -12,9 +15,27 @@ export default function Home() {
 
     const trialType = getTrialType(pageNumber);
 
+    const [practiceTrialParameters, setPracticeTrialParameters] = useState<trialParameters[]>([]);
+    const [trialParameters, setTrialParameters] = useState<trialParameters[]>([]);
+
+    const [prolificId, setProlificId] = useState<string>("TEST OR UNKNOWN");
+
     useEffect(() => {
         // Capture Query Parameter for Prolific
+        const urlParams = new URLSearchParams(window.location.search);
+        const prolificIdTemp = urlParams.get("PROLIFIC_PID");
+        if (prolificIdTemp) {
+            setProlificId(prolificIdTemp);
+        }
+
         // Generate and save trial parameters
+        const practiceTrialParametersTemp = generatePracticeTrialParameters();
+        const trialParametersTemp = generateTrialParameters();
+
+        setPracticeTrialParameters(practiceTrialParametersTemp);
+        setTrialParameters(trialParametersTemp);
+
+
     }, []);
 
     return (
@@ -30,7 +51,8 @@ export default function Home() {
             {
                 trialType === "PRACTICE" &&
                 <Trial
-                    trialNumber={pageNumber}
+                    {...practiceTrialParameters[pageNumber - (NUM_INSTRUCTIONS + 1)]}
+                    prolificId={prolificId}
                     onComplete={() => setPageNumber(pageNumber + 1)}
                 />
             }
@@ -45,7 +67,8 @@ export default function Home() {
             {
                 trialType === "TRIAL" &&
                 <Trial
-                    trialNumber={pageNumber}
+                    {...trialParameters[pageNumber - (NUM_INSTRUCTIONS + NUM_PRACTICE_TRIALS + NUM_POST_PRACTICE_INSTRUCTIONS + 1)]}
+                    prolificId={prolificId}
                     onComplete={() => setPageNumber(pageNumber + 1)}
                 />
             }

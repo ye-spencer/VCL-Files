@@ -1,6 +1,6 @@
 import { trialData } from "../lib/types";
 
-interface TrialProps {
+interface TrialDisplayProps {
     trialNumber: number,
     rectAXPercent: number, // x-coordinate as a percentage, should be between 5%-45%
     rectAYPercent: number, // y-coordinate as a percentage, should be between 5%-95%
@@ -14,10 +14,11 @@ interface TrialProps {
     rectBOrientation: number, // degrees, between 0 and 180
     rectAColor: string, // color of rectangle A
     rectBColor: string, // color of rectangle B
+    prolificId: string,
     onComplete: (data: trialData) => void,
 }
 
-export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectBXPercent, rectBYPercent, rectAWidthPercent, rectAHeightPercent, rectBWidthPercent, rectBHeightPercent, rectAOrientation, rectBOrientation, rectAColor, rectBColor, onComplete }: TrialProps) {
+export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectBXPercent, rectBYPercent, rectAWidthPercent, rectAHeightPercent, rectBWidthPercent, rectBHeightPercent, rectAOrientation, rectBOrientation, rectAColor, rectBColor, prolificId, onComplete }: TrialDisplayProps) {
     return (
         <div>
             <h1>Trial {trialNumber}</h1>
@@ -28,4 +29,6 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
 // Start with a blank screen, flash the two rectangles for a set amount of time, then clear the screen and wait for the user to respond.
 
 // Should rectangles have the same width? Should lengths be diff but ratio is same?
+
+// On key click, either p or q, record the response time and the response, then call onComplete.
 
