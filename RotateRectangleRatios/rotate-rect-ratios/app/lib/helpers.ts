@@ -36,7 +36,7 @@ export function getInstructionWaitDelayMS(pageNumber: number) {
 }
 
 export function getPostPracticeInstruction(pageNumber: number) {
-    const index = pageNumber - NUM_INSTRUCTIONS - NUM_PRACTICE_TRIALS;
+    const index = pageNumber - NUM_INSTRUCTIONS - NUM_PRACTICE_TRIALS - 1;
     if (index < 0 || index >= POST_PRACTICE_INSTRUCTIONS.length) {
         throw new Error("Invalid page number for post practice instruction");
     }
@@ -44,7 +44,7 @@ export function getPostPracticeInstruction(pageNumber: number) {
 }
 
 export function getPostPracticeInstructionWaitDelayMS(pageNumber: number) {
-    const index = pageNumber - NUM_INSTRUCTIONS - NUM_PRACTICE_TRIALS;
+    const index = pageNumber - NUM_INSTRUCTIONS - NUM_PRACTICE_TRIALS - 1;
     if (index < 0 || index >= POST_PRACTICE_INSTRUCTION_WAIT_DELAY_MS.length) {
         throw new Error("Invalid page number for post practice instruction wait delay");
     }

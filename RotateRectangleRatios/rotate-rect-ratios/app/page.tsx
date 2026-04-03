@@ -8,6 +8,7 @@ import { getInstruction, getPostPracticeInstruction, getTrialType, getInstructio
 import { generatePracticeTrialParameters, generateTrialParameters } from "./services/experimentData.service";
 import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS } from "./lib/constants";
 import { trialParameters } from "./lib/types";
+import { logTrialData } from "./services/dataLog.service";
 
 export default function Home() {
 
@@ -53,7 +54,10 @@ export default function Home() {
                 <Trial
                     {...practiceTrialParameters[pageNumber - (NUM_INSTRUCTIONS + 1)]}
                     prolificId={prolificId}
-                    onComplete={() => setPageNumber(pageNumber + 1)}
+                    onComplete={(data) => {
+                        logTrialData(data);
+                        setPageNumber(pageNumber + 1);
+                    }}
                 />
             }
             {
@@ -69,7 +73,10 @@ export default function Home() {
                 <Trial
                     {...trialParameters[pageNumber - (NUM_INSTRUCTIONS + NUM_PRACTICE_TRIALS + NUM_POST_PRACTICE_INSTRUCTIONS + 1)]}
                     prolificId={prolificId}
-                    onComplete={() => setPageNumber(pageNumber + 1)}
+                    onComplete={(data) => {
+                        logTrialData(data);
+                        setPageNumber(pageNumber + 1);
+                    }}
                 />
             }
             {

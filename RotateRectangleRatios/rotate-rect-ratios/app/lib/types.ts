@@ -2,7 +2,6 @@ export type trialData = trialParameters & {
     response: string,
     responseTime: number,
     prolificId: string,
-    // TODO: Make Correct
 }
 
 export type trialParameters = {
