@@ -65,7 +65,7 @@ export const RECTANGLE_COLORS = [
 ];
 
 export const WIDTHS_POSSIBLE = [
-    1, 2, 3
+    1
 ]
 
 export const HEIGHTS_POSSIBLE = [
