@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trialData, trialParameters } from "../lib/types";
-import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, AFTER_DISPLAY_INSTRUCTION, KEY_PRESS_INSTRUCTION } from "../lib/constants";
+import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, AFTER_DISPLAY_INSTRUCTION, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
 
 interface TrialDisplayProps extends trialParameters {
     prolificId: string,
@@ -128,9 +128,19 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
             <p style={{ fontSize: "2rem", marginBottom: "1rem" }}>
                 {AFTER_DISPLAY_INSTRUCTION}
             </p>
-            <p style={{ fontSize: "1.25rem" }}>
-                {KEY_PRESS_INSTRUCTION}
-            </p>
+            <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                padding: "0 4rem",
+            }}>
+                <p style={{ fontSize: "1.25rem" }}>
+                    {KEY_PRESS_INSTRUCTION_LEFT}
+                </p>
+                <p style={{ fontSize: "1.25rem" }}>
+                    {KEY_PRESS_INSTRUCTION_RIGHT}
+                </p>
+            </div>
         </div>
     );
 }
