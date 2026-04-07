@@ -15,9 +15,9 @@ export const INSTRUCTIONS = [
 ];
 
 export const INSTRUCTION_WAIT_DELAY_MS = [
-    20000,
-    35000,
-    20000,
+    10000,
+    17500,
+    10000,
 ];
 
 export const POST_PRACTICE_INSTRUCTIONS = [
@@ -46,7 +46,8 @@ export const END_SCREEN_URL = "https://app.prolific.co/submissions/complete?cc=C
 export const BLANK_SCREEN_TIME_MS = 750;
 export const DISPLAY_TIME_MS = 500;
 export const AFTER_DISPLAY_INSTRUCTION = "Which rectangle was longer?";
-export const KEY_PRESS_INSTRUCTION = "Press 'Q' if the left rectangle was longer. Press 'P' if the right rectangle was longer.";
+export const KEY_PRESS_INSTRUCTION_LEFT = "Press 'Q' if the left rectangle was longer.";
+export const KEY_PRESS_INSTRUCTION_RIGHT = "Press 'P' if the right rectangle was longer.";
 
 
 // EXPERIMENT PARAMETERS
@@ -92,14 +93,14 @@ export const RATIOS_LONG_PRACTICE = [
     ...Array(1).fill(3 / 2),
 ]
 
-export const ALLOWABLE_RECTANGLE_LEFT_X_MIN = 10;
-export const ALLOWABLE_RECTANGLE_LEFT_X_MAX = 40;
+export const ALLOWABLE_RECTANGLE_LEFT_X_MIN = 30;
+export const ALLOWABLE_RECTANGLE_LEFT_X_MAX = 45;
 
-export const ALLOWABLE_RECTANGLE_RIGHT_X_MIN = 60;
-export const ALLOWABLE_RECTANGLE_RIGHT_X_MAX = 90;
+export const ALLOWABLE_RECTANGLE_RIGHT_X_MIN = 55;
+export const ALLOWABLE_RECTANGLE_RIGHT_X_MAX = 70;
 
-export const ALLOWABLE_RECTANGLE_Y_MIN = 10;
-export const ALLOWABLE_RECTANGLE_Y_MAX = 90;
+export const ALLOWABLE_RECTANGLE_Y_MIN = 25;
+export const ALLOWABLE_RECTANGLE_Y_MAX = 75;
 
 export const ALLOWABLE_RECTANGLE_ROTATION_MIN = 0;
 export const ALLOWABLE_RECTANGLE_ROTATION_MAX = 180;
