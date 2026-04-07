@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { trialData, trialParameters } from "../lib/types";
+import { TrialData, TrialParameters } from "../lib/types";
 import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, AFTER_DISPLAY_INSTRUCTION, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
 
-interface TrialDisplayProps extends trialParameters {
+interface TrialDisplayProps extends TrialParameters {
     prolificId: string,
-    onComplete: (data: trialData) => void,
+    onComplete: (data: TrialData) => void,
 }
 
 type TrialPhase = "blank" | "display" | "response";
