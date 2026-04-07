@@ -18,6 +18,7 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
         if (phase === "blank") {
             const timer = setTimeout(() => {
                 setPhase("display");
+                responseStartTimeRef.current = Date.now();
             }, BLANK_SCREEN_TIME_MS);
             return () => clearTimeout(timer);
         }
@@ -25,7 +26,6 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
         if (phase === "display") {
             const timer = setTimeout(() => {
                 setPhase("response");
-                responseStartTimeRef.current = Date.now();
             }, DISPLAY_TIME_MS);
             return () => clearTimeout(timer);
         }
@@ -33,7 +33,7 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
 
     // Listen for key presses during the response phase
     const handleKeyPress = useCallback((e: KeyboardEvent) => {
-        if (phase !== "response") return;
+        if (phase !== "response" && phase !== "display") return;
 
         const key = e.key.toLowerCase();
         if (key !== "q" && key !== "p") return;
@@ -67,72 +67,65 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
         return () => window.removeEventListener("keydown", handleKeyPress);
     }, [handleKeyPress]);
 
-    // Phase 1: Blank screen
-    if (phase === "blank") {
-        return (
-            <div style={{
-                width: "100vw",
-                height: "100vh",
-                backgroundColor: "#808080",
-            }} />
-        );
-    }
-
-    // Phase 2: Display rectangles
-    if (phase === "display") {
-        return (
-            <div style={{
-                position: "relative",
-                width: "100vw",
-                height: "100vh",
-                backgroundColor: "#808080",
-                overflow: "hidden",
-            }}>
-                {/* Rectangle A */}
-                <div style={{
-                    position: "absolute",
-                    left: `${rectAXPercent}%`,
-                    top: `${rectAYPercent}%`,
-                    width: `${rectAWidthPercent}vw`,
-                    height: `${rectAHeightPercent}vh`,
-                    backgroundColor: rectAColor,
-                    transform: `translate(-50%, -50%) rotate(${rectAOrientation}deg)`,
-                }} />
-                {/* Rectangle B */}
-                <div style={{
-                    position: "absolute",
-                    left: `${rectBXPercent}%`,
-                    top: `${rectBYPercent}%`,
-                    width: `${rectBWidthPercent}vw`,
-                    height: `${rectBHeightPercent}vh`,
-                    backgroundColor: rectBColor,
-                    transform: `translate(-50%, -50%) rotate(${rectBOrientation}deg)`,
-                }} />
-            </div>
-        );
-    }
-
-    // Phase 3: Response screen
     return (
         <div style={{
+            position: "relative",
             width: "100vw",
             height: "100vh",
             backgroundColor: "#808080",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#ffffff",
-            fontFamily: "Arial, sans-serif",
+            overflow: "hidden",
         }}>
-            <p style={{ fontSize: "2rem", marginBottom: "1rem" }}>
-                {AFTER_DISPLAY_INSTRUCTION}
-            </p>
+            {/* Phase-specific content */}
+            {phase === "display" && (
+                <>
+                    {/* Rectangle A */}
+                    <div style={{
+                        position: "absolute",
+                        left: `${rectAXPercent}%`,
+                        top: `${rectAYPercent}%`,
+                        width: `${rectAWidthPercent}vw`,
+                        height: `${rectAHeightPercent}vh`,
+                        backgroundColor: rectAColor,
+                        transform: `translate(-50%, -50%) rotate(${rectAOrientation}deg)`,
+                    }} />
+                    {/* Rectangle B */}
+                    <div style={{
+                        position: "absolute",
+                        left: `${rectBXPercent}%`,
+                        top: `${rectBYPercent}%`,
+                        width: `${rectBWidthPercent}vw`,
+                        height: `${rectBHeightPercent}vh`,
+                        backgroundColor: rectBColor,
+                        transform: `translate(-50%, -50%) rotate(${rectBOrientation}deg)`,
+                    }} />
+                </>
+            )}
+
+            {phase === "response" && (
+                <div style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    height: "100%",
+                }}>
+                    <p style={{ fontSize: "2rem", color: "#ffffff", fontFamily: "Arial, sans-serif" }}>
+                        {AFTER_DISPLAY_INSTRUCTION}
+                    </p>
+                </div>
+            )}
+
+            {/* Persistent bottom instructions — visible in all phases */}
             <div style={{
+                position: "absolute",
+                bottom: "2rem",
+                left: 0,
+                right: 0,
                 display: "flex",
                 justifyContent: "space-between",
-                width: "100%",
                 padding: "0 4rem",
+                color: "#ffffff",
+                fontFamily: "Arial, sans-serif",
             }}>
                 <p style={{ fontSize: "1.25rem" }}>
                     {KEY_PRESS_INSTRUCTION_LEFT}
