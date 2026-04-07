@@ -15,9 +15,9 @@ export const INSTRUCTIONS = [
 ];
 
 export const INSTRUCTION_WAIT_DELAY_MS = [
-    10000,
-    17500,
-    10000,
+    7000,
+    11000,
+    7000,
 ];
 
 export const POST_PRACTICE_INSTRUCTIONS = [
@@ -25,7 +25,7 @@ export const POST_PRACTICE_INSTRUCTIONS = [
 ];
 
 export const POST_PRACTICE_INSTRUCTION_WAIT_DELAY_MS = [
-    10000,
+    3000,
 ];
 
 
