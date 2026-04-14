@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrialData, TrialParameters } from "../lib/types";
-import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
+import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT, ALLOWABLE_RECTANGLE_LEFT_X_MIN, ALLOWABLE_RECTANGLE_LEFT_X_MAX, ALLOWABLE_RECTANGLE_RIGHT_X_MIN, ALLOWABLE_RECTANGLE_RIGHT_X_MAX, ALLOWABLE_RECTANGLE_Y_MIN, ALLOWABLE_RECTANGLE_Y_MAX, MAX_HEIGHT_RECTANGLE_HALF } from "../lib/constants";
 import ProgressBar from "./progressbar";
 
 interface TrialDisplayProps extends TrialParameters {
@@ -77,6 +77,28 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
             backgroundColor: "#808080",
             overflow: "hidden",
         }}>
+            {/* Persistent outline boxes showing allowable rectangle areas */}
+            <div style={{
+                position: "absolute",
+                left: `${ALLOWABLE_RECTANGLE_LEFT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
+                top: `${ALLOWABLE_RECTANGLE_Y_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
+                width: `${ALLOWABLE_RECTANGLE_LEFT_X_MAX - ALLOWABLE_RECTANGLE_LEFT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                height: `${ALLOWABLE_RECTANGLE_Y_MAX - ALLOWABLE_RECTANGLE_Y_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                border: "2px solid rgba(11, 1, 1, 0.4)",
+                boxSizing: "border-box",
+                pointerEvents: "none",
+            }} />
+            <div style={{
+                position: "absolute",
+                left: `${ALLOWABLE_RECTANGLE_RIGHT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
+                top: `${ALLOWABLE_RECTANGLE_Y_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
+                width: `${ALLOWABLE_RECTANGLE_RIGHT_X_MAX - ALLOWABLE_RECTANGLE_RIGHT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                height: `${ALLOWABLE_RECTANGLE_Y_MAX - ALLOWABLE_RECTANGLE_Y_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                border: "2px solid rgba(11, 1, 1, 0.4)",
+                boxSizing: "border-box",
+                pointerEvents: "none",
+            }} />
+
             {/* Phase-specific content */}
             {phase === "display" && (
                 <>
@@ -85,8 +107,8 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                         position: "absolute",
                         left: `${rectAXPercent}%`,
                         top: `${rectAYPercent}%`,
-                        width: `${rectAWidthPercent}vw`,
-                        height: `${rectAHeightPercent}vh`,
+                        width: `${rectAWidthPercent}%`,
+                        height: `${rectAHeightPercent}%`,
                         backgroundColor: rectAColor,
                         transform: `translate(-50%, -50%) rotate(${rectAOrientation}deg)`,
                     }} />
@@ -95,22 +117,11 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                         position: "absolute",
                         left: `${rectBXPercent}%`,
                         top: `${rectBYPercent}%`,
-                        width: `${rectBWidthPercent}vw`,
-                        height: `${rectBHeightPercent}vh`,
+                        width: `${rectBWidthPercent}%`,
+                        height: `${rectBHeightPercent}%`,
                         backgroundColor: rectBColor,
                         transform: `translate(-50%, -50%) rotate(${rectBOrientation}deg)`,
                     }} />
-                    {/* Fixation cross */}
-                    <div style={{
-                        position: "absolute",
-                        left: "50%",
-                        top: "50%",
-                        transform: "translate(-50%, -50%)",
-                        color: "#ffffff",
-                        fontSize: "2rem",
-                        fontFamily: "Arial, sans-serif",
-                        userSelect: "none",
-                    }}>+</div>
                 </>
             )}
 
@@ -125,31 +136,56 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                 </div>
             )}
 
-            {/* Persistent bottom instructions — visible in all phases */}
-            <div style={{
+            {/* Left instruction — centered beneath left box */}
+            <p style={{
                 position: "absolute",
-                bottom: "2rem",
-                left: 0,
-                right: 0,
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "0 4rem",
+                top: `${ALLOWABLE_RECTANGLE_Y_MAX + MAX_HEIGHT_RECTANGLE_HALF + 2}%`,
+                left: `${ALLOWABLE_RECTANGLE_LEFT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
+                width: `${ALLOWABLE_RECTANGLE_LEFT_X_MAX - ALLOWABLE_RECTANGLE_LEFT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                textAlign: "center",
                 color: "#ffffff",
                 fontFamily: "Arial, sans-serif",
+                fontSize: "1.25rem",
+                margin: 0,
+                pointerEvents: "none",
             }}>
-                <p style={{ fontSize: "1.25rem" }}>
-                    {KEY_PRESS_INSTRUCTION_LEFT}
+                {KEY_PRESS_INSTRUCTION_LEFT}
+            </p>
+
+            {/* Progress bar — centered between boxes */}
+            <div style={{
+                position: "absolute",
+                top: `90%`,
+                left: "50%",
+                transform: "translateX(-50%)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                color: "#ffffff",
+                fontFamily: "Arial, sans-serif",
+                pointerEvents: "none",
+            }}>
+                <p style={{ fontSize: "1.25rem", margin: "0 0 0.25rem 0" }}>
+                    Time Remaining
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <p style={{ fontSize: "1.25rem", margin: "0 0 0.25rem 0" }}>
-                        Time Remaining
-                    </p>
-                    <ProgressBar currentTrial={trialNumber} totalTrials={numTrials} />
-                </div>
-                <p style={{ fontSize: "1.25rem" }}>
-                    {KEY_PRESS_INSTRUCTION_RIGHT}
-                </p>
+                <ProgressBar currentTrial={trialNumber} totalTrials={numTrials} />
             </div>
+
+            {/* Right instruction — centered beneath right box */}
+            <p style={{
+                position: "absolute",
+                top: `${ALLOWABLE_RECTANGLE_Y_MAX + MAX_HEIGHT_RECTANGLE_HALF + 2}%`,
+                left: `${ALLOWABLE_RECTANGLE_RIGHT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
+                width: `${ALLOWABLE_RECTANGLE_RIGHT_X_MAX - ALLOWABLE_RECTANGLE_RIGHT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                textAlign: "center",
+                color: "#ffffff",
+                fontFamily: "Arial, sans-serif",
+                fontSize: "1.25rem",
+                margin: 0,
+                pointerEvents: "none",
+            }}>
+                {KEY_PRESS_INSTRUCTION_RIGHT}
+            </p>
         </div>
     );
 }
