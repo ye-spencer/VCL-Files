@@ -100,6 +100,17 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                         backgroundColor: rectBColor,
                         transform: `translate(-50%, -50%) rotate(${rectBOrientation}deg)`,
                     }} />
+                    {/* Fixation cross */}
+                    <div style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        color: "#ffffff",
+                        fontSize: "2rem",
+                        fontFamily: "Arial, sans-serif",
+                        userSelect: "none",
+                    }}>+</div>
                 </>
             )}
 
