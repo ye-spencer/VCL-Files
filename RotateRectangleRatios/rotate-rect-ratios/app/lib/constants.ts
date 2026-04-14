@@ -1,7 +1,7 @@
 import assert from "assert";
 
 export const NUM_PRACTICE_TRIALS = 7;
-export const NUM_TRIALS = 35;
+export const NUM_TRIALS = 70;
 export const NUM_POST_PRACTICE_INSTRUCTIONS = 1;
 export const NUM_INSTRUCTIONS = 3;
 export const NUM_END_SCREEN = 1;
@@ -74,13 +74,13 @@ export const HEIGHTS_POSSIBLE = [
 ]
 
 export const RATIOS_LONG_TRIALS = [
-    ...Array(5).fill(51 / 50),
-    ...Array(5).fill(41 / 40),
-    ...Array(5).fill(31 / 30),
-    ...Array(5).fill(21 / 20),
-    ...Array(5).fill(5 / 4),
-    ...Array(5).fill(4 / 3),
-    ...Array(5).fill(3 / 2),
+    ...Array(10).fill(51 / 50),
+    ...Array(10).fill(41 / 40),
+    ...Array(10).fill(31 / 30),
+    ...Array(10).fill(21 / 20),
+    ...Array(10).fill(5 / 4),
+    ...Array(10).fill(4 / 3),
+    ...Array(10).fill(3 / 2),
 ]
 
 export const RATIOS_LONG_PRACTICE = [
