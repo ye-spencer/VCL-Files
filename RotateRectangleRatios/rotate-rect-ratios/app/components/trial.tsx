@@ -3,7 +3,7 @@ import { TrialData, TrialParameters } from "../lib/types";
 import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
 import ProgressBar from "./progressbar";
 
-type TrialDisplayProps = TrialParameters & {
+interface TrialDisplayProps extends TrialParameters {
     numTrials: number,
     prolificId: string,
     onComplete: (data: TrialData) => void,
