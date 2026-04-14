@@ -6,8 +6,8 @@ import Trial from "./components/trial";
 import EndScreen from "./components/endscreen";
 import { getInstruction, getPostPracticeInstruction, getTrialType, getInstructionWaitDelayMS, getPostPracticeInstructionWaitDelayMS } from "./lib/helpers";
 import { generatePracticeTrialParameters, generateTrialParameters } from "./services/experimentData.service";
-import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS } from "./lib/constants";
-import { trialParameters } from "./lib/types";
+import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS, NUM_TRIALS } from "./lib/constants";
+import { TrialParameters } from "./lib/types";
 import { logTrialData } from "./services/dataLog.service";
 
 export default function Home() {
@@ -16,8 +16,8 @@ export default function Home() {
 
     const trialType = getTrialType(pageNumber);
 
-    const [practiceTrialParameters, setPracticeTrialParameters] = useState<trialParameters[]>([]);
-    const [trialParameters, setTrialParameters] = useState<trialParameters[]>([]);
+    const [practiceTrialParameters, setPracticeTrialParameters] = useState<TrialParameters[]>([]);
+    const [trialParameters, setTrialParameters] = useState<TrialParameters[]>([]);
 
     const [prolificId, setProlificId] = useState<string>("TEST OR UNKNOWN");
 
@@ -53,6 +53,7 @@ export default function Home() {
                 trialType === "PRACTICE" &&
                 <Trial
                     {...practiceTrialParameters[pageNumber - (NUM_INSTRUCTIONS + 1)]}
+                    numTrials={NUM_PRACTICE_TRIALS}
                     prolificId={prolificId}
                     onComplete={(data) => {
                         logTrialData(data);
@@ -72,6 +73,7 @@ export default function Home() {
                 trialType === "TRIAL" &&
                 <Trial
                     {...trialParameters[pageNumber - (NUM_INSTRUCTIONS + NUM_PRACTICE_TRIALS + NUM_POST_PRACTICE_INSTRUCTIONS + 1)]}
+                    numTrials={NUM_TRIALS}
                     prolificId={prolificId}
                     onComplete={(data) => {
                         logTrialData(data);

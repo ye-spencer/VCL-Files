@@ -1,4 +1,4 @@
-import { trialParameters } from "../lib/types";
+import { TrialParameters } from "../lib/types";
 import { NUM_PRACTICE_TRIALS, NUM_TRIALS, RATIOS_LONG_PRACTICE, RATIOS_LONG_TRIALS, WIDTHS_POSSIBLE, HEIGHTS_POSSIBLE, RECTANGLE_COLORS, ALLOWABLE_RECTANGLE_LEFT_X_MIN, ALLOWABLE_RECTANGLE_LEFT_X_MAX, ALLOWABLE_RECTANGLE_RIGHT_X_MIN, ALLOWABLE_RECTANGLE_RIGHT_X_MAX, ALLOWABLE_RECTANGLE_Y_MIN, ALLOWABLE_RECTANGLE_Y_MAX, ALLOWABLE_RECTANGLE_ROTATION_MIN, ALLOWABLE_RECTANGLE_ROTATION_MAX } from "../lib/constants";
 
 function getRandomBetween(min: number, max: number): number {
@@ -9,8 +9,8 @@ function getRandomIndex(arr: any[]): number {
     return Math.floor(Math.random() * arr.length);
 }
 
-export function generatePracticeTrialParameters(): trialParameters[] {
-    const trialParameters: trialParameters[] = [];
+export function generatePracticeTrialParameters(): TrialParameters[] {
+    const trialParameters: TrialParameters[] = [];
 
     const shuffledRatios = [...RATIOS_LONG_PRACTICE].sort(() => Math.random() - 0.5);
 
@@ -24,7 +24,7 @@ export function generatePracticeTrialParameters(): trialParameters[] {
             Math.random() < 0.5 ? [heightFactor, larger] : [larger, heightFactor];
 
         trialParameters.push({
-            trialNumber: NUM_PRACTICE_TRIALS - i,
+            trialNumber: -1 * (NUM_PRACTICE_TRIALS - i),
             rectAXPercent: getRandomBetween(ALLOWABLE_RECTANGLE_LEFT_X_MIN, ALLOWABLE_RECTANGLE_LEFT_X_MAX),
             rectAYPercent: getRandomBetween(ALLOWABLE_RECTANGLE_Y_MIN, ALLOWABLE_RECTANGLE_Y_MAX),
             rectBXPercent: getRandomBetween(ALLOWABLE_RECTANGLE_RIGHT_X_MIN, ALLOWABLE_RECTANGLE_RIGHT_X_MAX),
@@ -42,8 +42,8 @@ export function generatePracticeTrialParameters(): trialParameters[] {
     return trialParameters;
 }
 
-export function generateTrialParameters(): trialParameters[] {
-    const trialParameters: trialParameters[] = [];
+export function generateTrialParameters(): TrialParameters[] {
+    const trialParameters: TrialParameters[] = [];
 
     const shuffledRatios = [...RATIOS_LONG_TRIALS].sort(() => Math.random() - 0.5);
 
@@ -57,7 +57,7 @@ export function generateTrialParameters(): trialParameters[] {
             Math.random() < 0.5 ? [heightFactor, larger] : [larger, heightFactor];
 
         trialParameters.push({
-            trialNumber: NUM_TRIALS - i,
+            trialNumber: i + 1,
             rectAXPercent: getRandomBetween(ALLOWABLE_RECTANGLE_LEFT_X_MIN, ALLOWABLE_RECTANGLE_LEFT_X_MAX),
             rectAYPercent: getRandomBetween(ALLOWABLE_RECTANGLE_Y_MIN, ALLOWABLE_RECTANGLE_Y_MAX),
             rectBXPercent: getRandomBetween(ALLOWABLE_RECTANGLE_RIGHT_X_MIN, ALLOWABLE_RECTANGLE_RIGHT_X_MAX),

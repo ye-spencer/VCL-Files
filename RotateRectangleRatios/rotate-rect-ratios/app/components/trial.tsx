@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { trialData, trialParameters } from "../lib/types";
-import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, AFTER_DISPLAY_INSTRUCTION, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
+import { TrialData, TrialParameters } from "../lib/types";
+import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
+import ProgressBar from "./progressbar";
 
-interface TrialDisplayProps extends trialParameters {
+interface TrialDisplayProps extends TrialParameters {
+    numTrials: number,
     prolificId: string,
-    onComplete: (data: trialData) => void,
+    onComplete: (data: TrialData) => void,
 }
 
 type TrialPhase = "blank" | "display" | "response";
 
-export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectBXPercent, rectBYPercent, rectAWidthPercent, rectAHeightPercent, rectBWidthPercent, rectBHeightPercent, rectAOrientation, rectBOrientation, rectAColor, rectBColor, prolificId, onComplete }: TrialDisplayProps) {
+export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectBXPercent, rectBYPercent, rectAWidthPercent, rectAHeightPercent, rectBWidthPercent, rectBHeightPercent, rectAOrientation, rectBOrientation, rectAColor, rectBColor, numTrials, prolificId, onComplete }: TrialDisplayProps) {
 
     const [phase, setPhase] = useState<TrialPhase>("blank");
     const responseStartTimeRef = useRef<number>(-1);
@@ -98,6 +100,17 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                         backgroundColor: rectBColor,
                         transform: `translate(-50%, -50%) rotate(${rectBOrientation}deg)`,
                     }} />
+                    {/* Fixation cross */}
+                    <div style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        color: "#ffffff",
+                        fontSize: "2rem",
+                        fontFamily: "Arial, sans-serif",
+                        userSelect: "none",
+                    }}>+</div>
                 </>
             )}
 
@@ -109,9 +122,6 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                     width: "100%",
                     height: "100%",
                 }}>
-                    <p style={{ fontSize: "2rem", color: "#ffffff", fontFamily: "Arial, sans-serif" }}>
-                        {AFTER_DISPLAY_INSTRUCTION}
-                    </p>
                 </div>
             )}
 
@@ -130,6 +140,12 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
                 <p style={{ fontSize: "1.25rem" }}>
                     {KEY_PRESS_INSTRUCTION_LEFT}
                 </p>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <p style={{ fontSize: "1.25rem", margin: "0 0 0.25rem 0" }}>
+                        Time Remaining
+                    </p>
+                    <ProgressBar currentTrial={trialNumber} totalTrials={numTrials} />
+                </div>
                 <p style={{ fontSize: "1.25rem" }}>
                     {KEY_PRESS_INSTRUCTION_RIGHT}
                 </p>
