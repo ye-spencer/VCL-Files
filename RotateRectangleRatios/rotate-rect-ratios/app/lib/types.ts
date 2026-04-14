@@ -1,6 +1,6 @@
 // export type TrialData = TrialParameters & {
 //     response: string,
-//     responseTime: number,
+//     responseTime: number, // in milliseconds since the rectangles appeared on screen
 //     prolificId: string,
 // }
 

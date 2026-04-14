@@ -6,7 +6,7 @@ import Trial from "./components/trial";
 import EndScreen from "./components/endscreen";
 import { getInstruction, getPostPracticeInstruction, getTrialType, getInstructionWaitDelayMS, getPostPracticeInstructionWaitDelayMS } from "./lib/helpers";
 import { generatePracticeTrialParameters, generateTrialParameters } from "./services/experimentData.service";
-import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS } from "./lib/constants";
+import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS, NUM_TRIALS } from "./lib/constants";
 import { TrialParameters } from "./lib/types";
 import { logTrialData } from "./services/dataLog.service";
 
@@ -53,6 +53,7 @@ export default function Home() {
                 trialType === "PRACTICE" &&
                 <Trial
                     {...practiceTrialParameters[pageNumber - (NUM_INSTRUCTIONS + 1)]}
+                    numTrials={NUM_PRACTICE_TRIALS}
                     prolificId={prolificId}
                     onComplete={(data) => {
                         logTrialData(data);
@@ -72,6 +73,7 @@ export default function Home() {
                 trialType === "TRIAL" &&
                 <Trial
                     {...trialParameters[pageNumber - (NUM_INSTRUCTIONS + NUM_PRACTICE_TRIALS + NUM_POST_PRACTICE_INSTRUCTIONS + 1)]}
+                    numTrials={NUM_TRIALS}
                     prolificId={prolificId}
                     onComplete={(data) => {
                         logTrialData(data);
