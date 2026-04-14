@@ -74,13 +74,13 @@ export const HEIGHTS_POSSIBLE = [
 ]
 
 export const RATIOS_LONG_TRIALS = [
-    ...Array(5).fill(51 / 50),
-    ...Array(5).fill(41 / 40),
-    ...Array(5).fill(31 / 30),
-    ...Array(5).fill(21 / 20),
-    ...Array(5).fill(5 / 4),
-    ...Array(5).fill(4 / 3),
-    ...Array(5).fill(3 / 2),
+    ...Array(10).fill(51 / 50),
+    ...Array(10).fill(41 / 40),
+    ...Array(10).fill(31 / 30),
+    ...Array(10).fill(21 / 20),
+    ...Array(10).fill(5 / 4),
+    ...Array(10).fill(4 / 3),
+    ...Array(10).fill(3 / 2),
 ]
 
 export const RATIOS_LONG_PRACTICE = [
