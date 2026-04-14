@@ -1,7 +1,7 @@
 import assert from "assert";
 
 export const NUM_PRACTICE_TRIALS = 7;
-export const NUM_TRIALS = 35;
+export const NUM_TRIALS = 70;
 export const NUM_POST_PRACTICE_INSTRUCTIONS = 1;
 export const NUM_INSTRUCTIONS = 3;
 export const NUM_END_SCREEN = 1;
