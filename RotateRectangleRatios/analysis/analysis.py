@@ -4,9 +4,9 @@ from supabase import create_client
 import pandas as pd
 import numpy as np
 
-DEBUG = False
+DEBUG = True
 
-EXPECTED_TRIALS_PER_PARTICIPANT = 70
+NUM_TRIALS_PER_RATIO_GROUP = 10
 
 RATIOS = {
     "A: 51:50" : 51/50,
@@ -17,6 +17,8 @@ RATIOS = {
     "F: 4:3" : 4/3,
     "G: 3:2" : 3/2,
 }
+
+EXPECTED_TRIALS_PER_PARTICIPANT = len(RATIOS) * NUM_TRIALS_PER_RATIO_GROUP
 
 target_labels = list(RATIOS.keys())
 target_values = np.array(list(RATIOS.values()))
@@ -66,7 +68,10 @@ if DEBUG:
 
 df_valid_participants = df[df["prolific_id"].isin(count_trials_per_participant[count_trials_per_participant == EXPECTED_TRIALS_PER_PARTICIPANT].index)].copy()
 
-print("Number of Valid Participants: ", len(df_valid_participants) / EXPECTED_TRIALS_PER_PARTICIPANT)
+
+NUM_VALID_PARTICIPANTS = len(df_valid_participants) / EXPECTED_TRIALS_PER_PARTICIPANT
+
+print("Number of Valid Participants: ", NUM_VALID_PARTICIPANTS)
 
 # Add Column Indicating if Trial was Correct
 
@@ -103,9 +108,66 @@ if DEBUG:
     print("Head of Final DataFrame: \n", df_valid_participants.head())
     print("Columns in Final DataFrame: \n", df_valid_participants.dtypes)
 
-### Step 4: Analyze Data ###
+### Step 4: Analyze Data | Average Correct By Ratio Group ###
 
-print("Correct By Ratio Group: \n", df_valid_participants.groupby("ratio_group")["is_correct"].mean())
+print("Average Correct By Ratio Group: \n", df_valid_participants.groupby("ratio_group")["is_correct"].mean())
+print("\n\n")
+
+### Step 5: Analyze Data | Main Graph no Fit ###
+
+df_valid_participants_correct_by_ratio = df_valid_participants.groupby(["ratio_group", "prolific_id"])["is_correct"].sum().reset_index()
+
+df_valid_participants_correct_by_ratio["is_correct_ratio"] = df_valid_participants_correct_by_ratio["is_correct"] / NUM_TRIALS_PER_RATIO_GROUP
+
+if DEBUG:
+    print(df_valid_participants_correct_by_ratio)
+
+final_df = df_valid_participants_correct_by_ratio.groupby("ratio_group")["is_correct_ratio"].agg(["mean", "std"]).reset_index()
+
+final_df["std_err"] = final_df["std"] / np.sqrt(NUM_VALID_PARTICIPANTS)
+
+final_df["ratio_value"] = final_df["ratio_group"].apply(lambda x: RATIOS[x])
+
+if DEBUG:
+    print(final_df)
+
+# Create a graph of the data. y-axis is from 0.5 to 1.0 representing the proportion of correct responses. x-axis is 1 to 1.6 representing the ratio group. There should be a std_err for each point.
+
+import matplotlib.pyplot as plt
+
+final_df_sorted = final_df.sort_values("ratio_value")
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.errorbar(
+    final_df_sorted["ratio_value"],
+    final_df_sorted["mean"],
+    yerr=final_df_sorted["std_err"],
+    fmt="o",
+    capsize=4,
+    capthick=1,
+    markersize=7,
+    linewidth=1,
+    color="#2b6cb0",
+    ecolor="#4a5568",
+    alpha=0.5,
+    label="Proportion Correct",
+)
+
+ax.set_xlim(1.0, 1.55)
+ax.set_ylim(0.5, 1.0)
+ax.set_xlabel("Rectangle Height Ratio (Larger / Smaller)", fontsize=12)
+ax.set_ylabel("Proportion Correct", fontsize=12)
+ax.set_title("Accuracy by Rectangle Ratio", fontsize=14)
+ax.legend(loc="lower right")
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig("accuracy_by_ratio.png", dpi=150)
+plt.show()
+
+print("Graph saved to accuracy_by_ratio.png")
+
 
 
 
