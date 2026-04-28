@@ -1,24 +1,17 @@
-create table trials_data_rrr (
+create table trials_data_tld (
   id bigint generated always as identity primary key,
   prolific_id text not null,
   trial_number integer not null,
-  rect_a_x_percent real not null,
-  rect_a_y_percent real not null,
-  rect_b_x_percent real not null,
-  rect_b_y_percent real not null,
-  rect_a_width_percent real not null,
-  rect_a_height_percent real not null,
-  rect_b_width_percent real not null,
-  rect_b_height_percent real not null,
-  rect_a_orientation real not null,
-  rect_b_orientation real not null,
-  rect_a_color text not null,
-  rect_b_color text not null,
+  degrees_tilted real not null,
+  tilt_direction text not null,
+  rectangle_height_percent real not null,
+  rectangle_width_percent real not null,
+  rectangle_color text not null,
   response text not null,
   response_time real not null,
   created_at timestamptz not null default now()
 );
 
-create index trials_prolific_id_idx on trials_data_rrr (prolific_id);
+create index trials_prolific_id_idx on trials_data_tld (prolific_id);
 
-alter table trials_data_rrr enable row level security;
+alter table trials_data_tld enable row level security;

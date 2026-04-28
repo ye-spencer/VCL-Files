@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrialData, TrialParameters } from "../lib/types";
-import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT, ALLOWABLE_RECTANGLE_LEFT_X_MIN, ALLOWABLE_RECTANGLE_LEFT_X_MAX, ALLOWABLE_RECTANGLE_RIGHT_X_MIN, ALLOWABLE_RECTANGLE_RIGHT_X_MAX, ALLOWABLE_RECTANGLE_Y_MIN, ALLOWABLE_RECTANGLE_Y_MAX, MAX_HEIGHT_RECTANGLE_HALF } from "../lib/constants";
+import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
 import ProgressBar from "./progressbar";
 
 interface TrialDisplayProps extends TrialParameters {
@@ -11,7 +11,7 @@ interface TrialDisplayProps extends TrialParameters {
 
 type TrialPhase = "blank" | "display" | "response";
 
-export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectBXPercent, rectBYPercent, rectAWidthPercent, rectAHeightPercent, rectBWidthPercent, rectBHeightPercent, rectAOrientation, rectBOrientation, rectAColor, rectBColor, numTrials, prolificId, onComplete }: TrialDisplayProps) {
+export default function Trial({ trialNumber, degreesTilted, tiltDirection, rectangleHeightPercent, rectangleWidthPercent, rectangleColor, numTrials, prolificId, onComplete }: TrialDisplayProps) {
 
     const [phase, setPhase] = useState<TrialPhase>("blank");
     const responseStartTimeRef = useRef<number>(-1);
@@ -44,18 +44,11 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
 
         onComplete({
             trialNumber,
-            rectAXPercent,
-            rectAYPercent,
-            rectBXPercent,
-            rectBYPercent,
-            rectAWidthPercent,
-            rectAHeightPercent,
-            rectBWidthPercent,
-            rectBHeightPercent,
-            rectAOrientation,
-            rectBOrientation,
-            rectAColor,
-            rectBColor,
+            degreesTilted,
+            tiltDirection,
+            rectangleHeightPercent,
+            rectangleWidthPercent,
+            rectangleColor,
             prolificId,
             response: key,
             responseTime,
@@ -77,50 +70,19 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
             backgroundColor: "#808080",
             overflow: "hidden",
         }}>
-            {/* Persistent outline boxes showing allowable rectangle areas */}
-            <div style={{
-                position: "absolute",
-                left: `${ALLOWABLE_RECTANGLE_LEFT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
-                top: `${ALLOWABLE_RECTANGLE_Y_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
-                width: `${ALLOWABLE_RECTANGLE_LEFT_X_MAX - ALLOWABLE_RECTANGLE_LEFT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
-                height: `${ALLOWABLE_RECTANGLE_Y_MAX - ALLOWABLE_RECTANGLE_Y_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
-                border: "2px solid rgba(11, 1, 1, 0.4)",
-                boxSizing: "border-box",
-                pointerEvents: "none",
-            }} />
-            <div style={{
-                position: "absolute",
-                left: `${ALLOWABLE_RECTANGLE_RIGHT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
-                top: `${ALLOWABLE_RECTANGLE_Y_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
-                width: `${ALLOWABLE_RECTANGLE_RIGHT_X_MAX - ALLOWABLE_RECTANGLE_RIGHT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
-                height: `${ALLOWABLE_RECTANGLE_Y_MAX - ALLOWABLE_RECTANGLE_Y_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
-                border: "2px solid rgba(11, 1, 1, 0.4)",
-                boxSizing: "border-box",
-                pointerEvents: "none",
-            }} />
 
             {/* Phase-specific content */}
             {phase === "display" && (
                 <>
-                    {/* Rectangle A */}
+                    {/* Rectangle */}
                     <div style={{
                         position: "absolute",
-                        left: `${rectAXPercent}%`,
-                        top: `${rectAYPercent}%`,
-                        width: `${rectAWidthPercent}%`,
-                        height: `${rectAHeightPercent}%`,
-                        backgroundColor: rectAColor,
-                        transform: `translate(-50%, -50%) rotate(${rectAOrientation}deg)`,
-                    }} />
-                    {/* Rectangle B */}
-                    <div style={{
-                        position: "absolute",
-                        left: `${rectBXPercent}%`,
-                        top: `${rectBYPercent}%`,
-                        width: `${rectBWidthPercent}%`,
-                        height: `${rectBHeightPercent}%`,
-                        backgroundColor: rectBColor,
-                        transform: `translate(-50%, -50%) rotate(${rectBOrientation}deg)`,
+                        left: `50%`,
+                        top: `50%`,
+                        width: `${rectangleWidthPercent}%`,
+                        height: `${rectangleHeightPercent}%`,
+                        backgroundColor: rectangleColor,
+                        transform: `translate(-50%, -50%) rotate(${degreesTilted}deg)`,
                     }} />
                 </>
             )}
@@ -139,9 +101,9 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
             {/* Left instruction — centered beneath left box */}
             <p style={{
                 position: "absolute",
-                top: `${ALLOWABLE_RECTANGLE_Y_MAX + MAX_HEIGHT_RECTANGLE_HALF + 2}%`,
-                left: `${ALLOWABLE_RECTANGLE_LEFT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
-                width: `${ALLOWABLE_RECTANGLE_LEFT_X_MAX - ALLOWABLE_RECTANGLE_LEFT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                top: `55%`,
+                left: `15%`,
+                width: `20%`,
                 textAlign: "center",
                 color: "#ffffff",
                 fontFamily: "Arial, sans-serif",
@@ -174,9 +136,9 @@ export default function Trial({ trialNumber, rectAXPercent, rectAYPercent, rectB
             {/* Right instruction — centered beneath right box */}
             <p style={{
                 position: "absolute",
-                top: `${ALLOWABLE_RECTANGLE_Y_MAX + MAX_HEIGHT_RECTANGLE_HALF + 2}%`,
-                left: `${ALLOWABLE_RECTANGLE_RIGHT_X_MIN - MAX_HEIGHT_RECTANGLE_HALF}%`,
-                width: `${ALLOWABLE_RECTANGLE_RIGHT_X_MAX - ALLOWABLE_RECTANGLE_RIGHT_X_MIN + MAX_HEIGHT_RECTANGLE_HALF * 2}%`,
+                top: `55%`,
+                left: `65%`,
+                width: `20%`,
                 textAlign: "center",
                 color: "#ffffff",
                 fontFamily: "Arial, sans-serif",
