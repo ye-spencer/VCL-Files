@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrialData, TrialParameters } from "../lib/types";
-import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT, KEY_PRESS_INSTRUCTION_RIGHT } from "../lib/constants";
+import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT_MAIN, KEY_PRESS_INSTRUCTION_LEFT_SUB, KEY_PRESS_INSTRUCTION_RIGHT_MAIN, KEY_PRESS_INSTRUCTION_RIGHT_SUB } from "../lib/constants";
 import ProgressBar from "./progressbar";
 
 interface TrialDisplayProps extends TrialParameters {
@@ -99,20 +99,23 @@ export default function Trial({ trialNumber, degreesTilted, tiltDirection, recta
             )}
 
             {/* Left instruction — centered beneath left box */}
-            <p style={{
+            <div style={{
                 position: "absolute",
-                top: `55%`,
+                top: `72%`,
                 left: `15%`,
                 width: `20%`,
                 textAlign: "center",
                 color: "#ffffff",
                 fontFamily: "Arial, sans-serif",
-                fontSize: "1.25rem",
-                margin: 0,
                 pointerEvents: "none",
             }}>
-                {KEY_PRESS_INSTRUCTION_LEFT}
-            </p>
+                <p style={{ fontSize: "2.5rem", fontWeight: "bold", margin: "0 0 0.5rem 0" }}>
+                    {KEY_PRESS_INSTRUCTION_LEFT_MAIN}
+                </p>
+                <p style={{ fontSize: "1rem", margin: 0 }}>
+                    {KEY_PRESS_INSTRUCTION_LEFT_SUB}
+                </p>
+            </div>
 
             {/* Progress bar — centered between boxes */}
             <div style={{
@@ -134,20 +137,23 @@ export default function Trial({ trialNumber, degreesTilted, tiltDirection, recta
             </div>
 
             {/* Right instruction — centered beneath right box */}
-            <p style={{
+            <div style={{
                 position: "absolute",
-                top: `55%`,
+                top: `72%`,
                 left: `65%`,
                 width: `20%`,
                 textAlign: "center",
                 color: "#ffffff",
                 fontFamily: "Arial, sans-serif",
-                fontSize: "1.25rem",
-                margin: 0,
                 pointerEvents: "none",
             }}>
-                {KEY_PRESS_INSTRUCTION_RIGHT}
-            </p>
+                <p style={{ fontSize: "2.5rem", fontWeight: "bold", margin: "0 0 0.5rem 0" }}>
+                    {KEY_PRESS_INSTRUCTION_RIGHT_MAIN}
+                </p>
+                <p style={{ fontSize: "1rem", margin: 0 }}>
+                    {KEY_PRESS_INSTRUCTION_RIGHT_SUB}
+                </p>
+            </div>
         </div>
     );
 }
