@@ -1,0 +1,225 @@
+---
+title: "Weber fitting"
+output: html_notebook
+---
+
+```{r Libraries}
+library(ggplot2)
+library(Rsolnp)
+library(viridis)
+```
+
+```{r Define model}
+## Weber model (w)
+
+# parameters
+w.start <- 1/3
+w.min <- 0
+w.max <- 3
+# probability function
+prob.w <- function(w,r){
+  p<-pnorm((r-1)/(w*sqrt(1+r^2)))
+  return(p)
+}
+# objective function
+NLL.w <- function(subjectParams,trialParams,outcomes) {
+  p <- prob.w(subjectParams[1],trialParams)
+  probofobs <- p*outcomes + (1-p)*(1-outcomes)
+  negativeloglikelihood <- -sum(log(probofobs))
+  return(negativeloglikelihood)
+}
+# lower and upper bounds
+numParam.w <- 1
+lb.w <- c(w.min)
+ub.w <- c(w.max)
+subjectParams.w <- c(w.start) # Set initial guesses
+
+
+## Weber Guess Model (wg)
+
+# parameters
+w.start <- 1/3
+w.min <- 0
+w.max <- 3
+g.start <- 1/3
+g.min <- 0
+g.max <- 3
+# probability function
+prob.wg <- function(w,g,r){
+  p<-pnorm((r-1)/(w*sqrt(1+r^2)))
+  prob <- (1-g)*p+(g/2)
+  return(prob)
+}
+# objective function
+NLL.wg <- function(subjectParams, trialParams,outcomes) {
+  p <- prob.wg(subjectParams[1],subjectParams[2],trialParams)
+  probofobs <- p*outcomes + (1-p)*(1-outcomes)
+  negativeloglikelihood <- -sum(log(probofobs))
+  return(negativeloglikelihood)
+}
+# lower and upper bounds
+numParam.wg <- 2
+lb.wg <- c(w.min,g.min)
+ub.wg <- c(w.max,g.max)
+subjectParams.wg <- c(w.start,g.start) # Set initial guesses
+```
+
+```{r Load data}
+# import data
+data <- read.csv("all_trials.csv")
+
+## Exclusions
+
+# calculate average performance per subject
+avgPerformance <- data.frame()
+for (subj in unique(data$Subject)){
+  thisSubj <- subset(data, Subject == subj)
+  meanPerformance <- mean(thisSubj$Response_converted)
+  
+  avgPerformance <- rbind(avgPerformance, data.frame(subj, group = unique(thisSubj$Status), grade = unique(thisSubj$Grade), meanPerformance))
+}
+# view average performance
+avgPerformance
+
+# remove subjects who scored 60% or less correct overall
+good_subjects <- avgPerformance$subj[avgPerformance$meanPerformance > .6]
+
+# how many subjects will this remove?
+length(unique(data$Subject)) - length(good_subjects)
+# 13 (6 CP, 7 MD) out of 173
+
+# remove low performing subjects for analyses
+data_trimmed <- subset(data, Subject %in% good_subjects)
+
+# visualize data
+ggplot(data_trimmed, aes(x = ActualNumberRatio, y = Response_converted, fill = Status, color = Status))+
+  facet_grid(~Grade)+
+  geom_hline(yintercept = .5, linetype = 2, color = "lightgray")+ # gray dashed line at 50%
+  stat_summary(fun = mean, alpha = .25)+ # calculates average response per ratio
+  scale_y_continuous(labels = scales::percent, limits = c(0,1.1))+ # y axis % scale
+  theme_classic(base_size = 14)+theme(aspect.ratio = 1)+
+  labs(x = "ratio", y = "% correct")+
+  scale_fill_viridis_d(begin = .5, end = 0)+
+  scale_color_viridis_d(begin = .5, end = 0)
+```
+
+```{r Model fitting}
+## Model fitting
+# fitting separately for each subject
+# this nesting structure is helpful in case subject numbers are repeated across groups/grades
+# if not, you could probably just do a loop over subject numbers, but you still need to save each subject's group & grade assn
+model_fits <- data.frame()
+for (grp in unique(data_trimmed$Status)){
+  for (gr in unique(data_trimmed$Grade)){
+    thisGrp <- subset(data_trimmed, Grade == gr & Status == grp)
+    for (subj in unique(thisGrp$Subject)){
+       thisSubj <- subset(thisGrp, Subject == subj)
+       thisFit <- solnp(subjectParams.wg, NLL.wg, LB=lb.wg, UB=ub.wg, # change these to ".w" to use model w/o g
+                        ineqfun=NULL, ineqLB=NULL, ineqUB=NULL, control=NULL, # don't worry about these
+                        trialParams=thisSubj$ActualNumberRatio, outcomes=thisSubj$Response_converted)
+       
+       model_fits <- rbind(model_fits, data.frame(group = grp, grade = gr, subject = subj,
+                                                  w_fit = thisFit$pars[1], g_fit = thisFit$pars[2]))
+    }
+  }
+}
+
+
+## statistical test 
+# does w differ by group?
+# this is basically equivalent to a t-test
+summary(lm(w_fit ~ group, data = model_fits))
+
+
+## Plotting
+# convert group to factor (rename)
+model_fits$groupF <- factor(model_fits$group, levels = c("CP", "MLD"), labels = c("Typical", "Math Learning Disability"))
+
+# CP < MLD in w
+ggplot(model_fits, aes(x = grade, y = w_fit, color = groupF, fill = groupF))+
+  geom_smooth(method = "lm")+
+  geom_point(alpha = .5, size = 2, position = position_jitter(width = .15))+
+  stat_summary(fun = mean, shape = 23, size = 1.5, alpha = .5, color = "black")+
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = .25)+
+  labs(x = "Grade", y = "Weber fraction", fill = "Group", color = "Group")+
+  theme_classic(base_size = 14)+theme(aspect.ratio = 1)+
+  scale_fill_viridis_d(begin = .5, end = 0)+scale_color_viridis_d(begin = .5, end = 0)
+
+# no differences in g
+ggplot(model_fits, aes(x = grade, y = g_fit, color = groupF, fill = groupF))+
+  geom_smooth(method = "lm")+
+  geom_point(alpha = .5, size = 2, position = position_jitter(width = .15))+
+  stat_summary(fun = mean, shape = 23, size = 1.5, alpha = .5, color = "black")+
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = .25)+
+  labs(x = "Grade", y = "Guess rate (%)", fill = "Group", color = "Group")+
+  theme_classic(base_size = 14)+theme(aspect.ratio = 1)+
+  scale_y_continuous(labels = scales::percent)+
+  scale_fill_viridis_d(begin = .5, end = 0)+
+  scale_color_viridis_d(begin = .5, end = 0)
+```
+
+
+
+
+
+```{r Simulation (Demo)}
+# Set parameters for simulation
+w <- .2
+g <- .05
+
+# how many trials per ratio
+nTrials <- 100
+
+# simulate!
+sim_data <- data.frame() # DF to store results
+for (ratio in seq(1.05, 2, .01)){
+  p_correct <- prob.wg(w,g,ratio) # calculate prob correct at this ratio given these parameters
+
+  resps <- rbinom(n = nTrials, size = 1, prob = p_correct) # randomly sample nTrials responses given this probability
+
+  sim_data <- rbind(sim_data, data.frame(ratio = rep(ratio, nTrials), resp = resps)) # add results to DF
+}
+
+ggplot(sim_data, aes(x = ratio, y = resp))+
+  geom_hline(yintercept = .5, linetype = 2, color = "lightgray")+ # gray dashed line at 50%
+  stat_summary(fun = mean, alpha = .5, size = 2, color = "lightblue")+ # calculates average response per ratio
+  scale_y_continuous(labels = scales::percent, limits = c(0,1))+ # y axis % scale
+  theme_classic(base_size = 14)+theme(aspect.ratio = 1)+
+  labs(x = "ratio", y = "% correct")
+
+# fit WG model to data
+# trialParams = ratio (larger / smaller),
+# outcomes = response (0 incorrect, 1 correct)
+model_fit <- solnp(subjectParams.wg, NLL.wg, LB=lb.wg, UB=ub.wg, # change these to ".w" to use model w/o g
+                   ineqfun=NULL, ineqLB=NULL, ineqUB=NULL, control=NULL, # don't worry about these
+                   trialParams=sim_data$ratio, outcomes=sim_data$resp) 
+
+# view fitted w and g
+model_fit$pars
+
+# w 
+w_fit <- model_fit$pars[1]
+
+# g
+g_fit <- model_fit$pars[2]
+
+
+# generate Weber prediction for each ratio given these parameters
+curve_dat <- data.frame()
+for (ratio in seq(1, 2.05, .01)){
+  pred <- prob.wg(w_fit, g_fit, ratio)
+  curve_dat <- rbind(curve_dat, data.frame(ratio, pred))
+}
+
+# plot
+ggplot(sim_data, aes(x = ratio, y = resp))+
+  geom_hline(yintercept = .5, linetype = 2, color = "lightgray")+
+  stat_summary(fun = mean, alpha = .5, size = 2, color = "lightblue")+
+  geom_path(data = curve_dat, aes(x = ratio, y = pred), size = 2, alpha = .5, color = "blue")+
+  scale_y_continuous(labels = scales::percent, limits = c(0,1))+
+  theme_classic(base_size = 14)+theme(aspect.ratio = 1)+
+  labs(x = "ratio", y = "% correct")
+```
+
+
+
