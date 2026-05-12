@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from supabase import create_client
 import pandas as pd
 import numpy as np
+from scipy.stats import norm
+from scipy.optimize import minimize
 
 DEBUG = True
 
@@ -68,16 +70,15 @@ if DEBUG:
 
 df_valid_participants = df[df["prolific_id"].isin(count_trials_per_participant[count_trials_per_participant == EXPECTED_TRIALS_PER_PARTICIPANT].index)].copy()
 
-
-NUM_VALID_PARTICIPANTS = len(df_valid_participants) / EXPECTED_TRIALS_PER_PARTICIPANT
-
-print("Number of Valid Participants: ", NUM_VALID_PARTICIPANTS)
-
 # Add Column Indicating if Trial was Correct
 
 df_valid_participants["correct_response"] = df_valid_participants.apply(lambda x: "q" if x["rect_a_height_percent"] > x["rect_b_height_percent"] else "p", axis=1)
 
 df_valid_participants["is_correct"] = df_valid_participants["response"] == df_valid_participants["correct_response"]
+
+NUM_VALID_PARTICIPANTS = len(df_valid_participants) / EXPECTED_TRIALS_PER_PARTICIPANT
+
+print("Number of Valid Participants: ", NUM_VALID_PARTICIPANTS)
 
 if DEBUG:
     print("\nPercent Correct: \n", df_valid_participants["is_correct"].mean())
@@ -113,7 +114,40 @@ if DEBUG:
 print("Average Correct By Ratio Group: \n", df_valid_participants.groupby("ratio_group")["is_correct"].mean())
 print("\n\n")
 
-### Step 5: Analyze Data | Main Graph no Fit ###
+### Step 4b: Fit Weber Model (with guess rate) Per Participant ###
+
+# probability of correct given Weber fraction w, guess rate g, ratio r
+def prob_wg(w, g, r):
+    return (1 - g) * norm.cdf((r - 1) / (w * np.sqrt(1 + r**2))) + g / 2
+
+# negative log-likelihood for trial-level (0/1) outcomes
+def nll_wg(params, r, y):
+    p = prob_wg(params[0], params[1], r)
+    p = np.clip(p, 1e-12, 1 - 1e-12)
+    return -np.sum(np.log(p * y + (1 - p) * (1 - y)))
+
+WG_BOUNDS = [(1e-4, 3.0), (0.0, 1.0)]
+WG_START = [1 / 3, 1 / 3]
+
+fits = []
+for pid, sub in df_valid_participants.groupby("prolific_id"):
+    r = sub["raw_ratio"].to_numpy(dtype=float)
+    y = sub["is_correct"].to_numpy(dtype=float)
+    res = minimize(nll_wg, WG_START, args=(r, y), method="L-BFGS-B", bounds=WG_BOUNDS)
+    fits.append({"prolific_id": pid, "w_fit": res.x[0], "g_fit": res.x[1], "converged": res.success})
+
+model_fits = pd.DataFrame(fits)
+print("\nPer-participant Weber fits:")
+print(model_fits.describe()[["w_fit", "g_fit"]])
+
+# Group-level fit on pooled trials (for overlay curve)
+r_all = df_valid_participants["raw_ratio"].to_numpy(dtype=float)
+y_all = df_valid_participants["is_correct"].to_numpy(dtype=float)
+group_res = minimize(nll_wg, WG_START, args=(r_all, y_all), method="L-BFGS-B", bounds=WG_BOUNDS)
+w_group, g_group = group_res.x
+print(f"\nGroup-level fit (pooled): w = {w_group:.4f}, g = {g_group:.4f}")
+
+### Step 5: Analyze Data | Main Graph with Weber Fit ###
 
 df_valid_participants_correct_by_ratio = df_valid_participants.groupby(["ratio_group", "prolific_id"])["is_correct"].sum().reset_index()
 
@@ -154,6 +188,16 @@ ax.errorbar(
     label="Proportion Correct",
 )
 
+# Overlay Weber model fit (pooled across participants)
+r_grid = np.linspace(1.0, 1.55, 200)
+ax.plot(
+    r_grid,
+    prob_wg(w_group, g_group, r_grid),
+    color="#c53030",
+    linewidth=2,
+    label=f"Weber fit (w={w_group:.3f}, g={g_group:.3f})",
+)
+
 ax.set_xlim(1.0, 1.55)
 ax.set_ylim(0.5, 1.0)
 ax.set_xlabel("Rectangle Height Ratio (Larger / Smaller)", fontsize=12)
@@ -163,7 +207,7 @@ ax.legend(loc="lower right")
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig("accuracy_by_ratio.png", dpi=150)
+plt.savefig("accuracy_by_ratio.png", dpi=300)
 plt.show()
 
 print("Graph saved to accuracy_by_ratio.png")
