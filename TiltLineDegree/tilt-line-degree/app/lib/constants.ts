@@ -45,8 +45,10 @@ export const END_SCREEN_URL = "https://app.prolific.co/submissions/complete?cc=C
 
 export const BLANK_SCREEN_TIME_MS = 750;
 export const DISPLAY_TIME_MS = 500;
-export const KEY_PRESS_INSTRUCTION_LEFT = "Press 'Q' if the rectangle was tilted left (counter-clockwise).";
-export const KEY_PRESS_INSTRUCTION_RIGHT = "Press 'P' if the rectangle was tilted right (clockwise).";
+export const KEY_PRESS_INSTRUCTION_LEFT_MAIN = "Press Q";
+export const KEY_PRESS_INSTRUCTION_LEFT_SUB = "if the line was left of vertical";
+export const KEY_PRESS_INSTRUCTION_RIGHT_MAIN = "Press P";
+export const KEY_PRESS_INSTRUCTION_RIGHT_SUB = "if the line was right of vertical";
 
 
 // EXPERIMENT PARAMETERS
