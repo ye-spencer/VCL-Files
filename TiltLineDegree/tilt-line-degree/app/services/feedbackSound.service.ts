@@ -21,24 +21,18 @@ async function loadBuffer(ctx: AudioContext, url: string): Promise<AudioBuffer> 
     return await ctx.decodeAudioData(arrayBuffer);
 }
 
-export function preloadFeedbackSounds(): void {
-    const ctx = getContext();
-    if (!ctx) return;
-    if (!correctBuffer) {
-        loadBuffer(ctx, CORRECT_SOUND_URL).then(b => { correctBuffer = b; }).catch(() => {});
-    }
-    if (!incorrectBuffer) {
-        loadBuffer(ctx, INCORRECT_SOUND_URL).then(b => { incorrectBuffer = b; }).catch(() => {});
-    }
-}
-
 export function warmupFeedbackSounds(): void {
     const ctx = getContext();
     if (!ctx) return;
     if (ctx.state === "suspended") {
         ctx.resume().catch(() => {});
     }
-    preloadFeedbackSounds();
+    if (!correctBuffer) {
+        loadBuffer(ctx, CORRECT_SOUND_URL).then(b => { correctBuffer = b; }).catch(() => {});
+    }
+    if (!incorrectBuffer) {
+        loadBuffer(ctx, INCORRECT_SOUND_URL).then(b => { incorrectBuffer = b; }).catch(() => {});
+    }
 }
 
 export function isResponseCorrect(tiltDirection: string, key: string): boolean {
