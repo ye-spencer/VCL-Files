@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrialData, TrialParameters } from "../lib/types";
 import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT_MAIN, KEY_PRESS_INSTRUCTION_LEFT_SUB, KEY_PRESS_INSTRUCTION_RIGHT_MAIN, KEY_PRESS_INSTRUCTION_RIGHT_SUB } from "../lib/constants";
+import { isResponseCorrect, playFeedbackSound } from "../services/feedbackSound.service";
 import ProgressBar from "./progressbar";
 
 interface TrialDisplayProps extends TrialParameters {
@@ -41,6 +42,8 @@ export default function Trial({ trialNumber, degreesTilted, tiltDirection, recta
         if (key !== "q" && key !== "p") return;
 
         const responseTime = Date.now() - responseStartTimeRef.current;
+
+        playFeedbackSound(isResponseCorrect(tiltDirection, key));
 
         onComplete({
             trialNumber,

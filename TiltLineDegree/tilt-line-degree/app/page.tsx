@@ -9,6 +9,7 @@ import { generatePracticeTrialParameters, generateTrialParameters } from "./serv
 import { NUM_INSTRUCTIONS, NUM_POST_PRACTICE_INSTRUCTIONS, NUM_PRACTICE_TRIALS, NUM_TRIALS } from "./lib/constants";
 import { TrialParameters } from "./lib/types";
 import { logTrialData } from "./services/dataLog.service";
+import { preloadFeedbackSounds, warmupFeedbackSounds } from "./services/feedbackSound.service";
 
 export default function Home() {
 
@@ -36,7 +37,7 @@ export default function Home() {
         setPracticeTrialParameters(practiceTrialParametersTemp);
         setTrialParameters(trialParametersTemp);
 
-
+        preloadFeedbackSounds();
     }, []);
 
     return (
@@ -46,7 +47,10 @@ export default function Home() {
                 <Instruction
                     instruction={getInstruction(pageNumber)}
                     waitDelayMS={getInstructionWaitDelayMS(pageNumber)}
-                    onNext={() => setPageNumber(pageNumber + 1)}
+                    onNext={() => {
+                        warmupFeedbackSounds();
+                        setPageNumber(pageNumber + 1);
+                    }}
                 />
             }
             {
@@ -66,7 +70,10 @@ export default function Home() {
                 <Instruction
                     instruction={getPostPracticeInstruction(pageNumber)}
                     waitDelayMS={getPostPracticeInstructionWaitDelayMS(pageNumber)}
-                    onNext={() => setPageNumber(pageNumber + 1)}
+                    onNext={() => {
+                        warmupFeedbackSounds();
+                        setPageNumber(pageNumber + 1);
+                    }}
                 />
             }
             {
