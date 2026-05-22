@@ -3,7 +3,6 @@ import { CORRECT_SOUND_URL, INCORRECT_SOUND_URL } from "../lib/constants";
 let audioContext: AudioContext | null = null;
 let correctBuffer: AudioBuffer | null = null;
 let incorrectBuffer: AudioBuffer | null = null;
-let keepAliveStarted = false;
 
 function getContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
@@ -33,10 +32,6 @@ export function warmupFeedbackSounds(): void {
     if (!incorrectBuffer) {
         loadBuffer(ctx, INCORRECT_SOUND_URL).then(b => { incorrectBuffer = b; }).catch(() => {});
     }
-}
-
-export function isResponseCorrect(tiltDirection: string, key: string): boolean {
-    return (tiltDirection === "left" && key === "q") || (tiltDirection === "right" && key === "p");
 }
 
 export function playFeedbackSound(isCorrect: boolean): void {
