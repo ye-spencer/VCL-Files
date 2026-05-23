@@ -11,7 +11,7 @@ export const NUM_END_SCREEN = 1;
 export const INSTRUCTIONS = [
     "Hi! Welcome to our experiment! In this experiment, you will be guided through a series of trials where you will be asked to make judgments about rectangles. ",
     "In each trial, you will first see a blank screen, then you will see a rectangle appear on the screen for a brief moment. Then, the rectangle will disappear, and you will be asked to judge whether the rectangle was tilted to the left (counter-clockwise) or to the right (clockwise). Press 'Q' if the rectangle was tilted to the left. Press 'P' if the rectangle was tilted to the right.",
-    "We will start with some practice trials. The practice trials will not be recorded, so please do not worry about making mistakes. They are just to get you familiar with the task. They will begin on the next page."
+    "We will start with some practice trials. The practice trials will not be recorded, so please do not worry about making mistakes. They are just to get you familiar with the task. They will begin on the next page. You will hear a 'ding' or an 'err' sound indicating if you were correct or not. Please turn on your volume."
 ];
 
 export const INSTRUCTION_WAIT_DELAY_MS = [
@@ -49,6 +49,9 @@ export const KEY_PRESS_INSTRUCTION_LEFT_MAIN = "Press Q";
 export const KEY_PRESS_INSTRUCTION_LEFT_SUB = "if the line was left of vertical";
 export const KEY_PRESS_INSTRUCTION_RIGHT_MAIN = "Press P";
 export const KEY_PRESS_INSTRUCTION_RIGHT_SUB = "if the line was right of vertical";
+
+export const CORRECT_SOUND_URL = "/sounds/ding.mp3";
+export const INCORRECT_SOUND_URL = "/sounds/err.mp3";
 
 
 // EXPERIMENT PARAMETERS

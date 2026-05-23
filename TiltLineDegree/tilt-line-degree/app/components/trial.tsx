@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrialData, TrialParameters } from "../lib/types";
 import { BLANK_SCREEN_TIME_MS, DISPLAY_TIME_MS, KEY_PRESS_INSTRUCTION_LEFT_MAIN, KEY_PRESS_INSTRUCTION_LEFT_SUB, KEY_PRESS_INSTRUCTION_RIGHT_MAIN, KEY_PRESS_INSTRUCTION_RIGHT_SUB } from "../lib/constants";
+import { playFeedbackSound } from "../services/feedbackSound.service";
 import ProgressBar from "./progressbar";
+
+function isResponseCorrect(tiltDirection: string, key: string): boolean {
+    return (tiltDirection === "left" && key === "q") || (tiltDirection === "right" && key === "p");
+}
 
 interface TrialDisplayProps extends TrialParameters {
     numTrials: number,
@@ -42,6 +47,8 @@ export default function Trial({ trialNumber, degreesTilted, tiltDirection, recta
 
         const responseTime = Date.now() - responseStartTimeRef.current;
 
+        playFeedbackSound(isResponseCorrect(tiltDirection, key));
+
         onComplete({
             trialNumber,
             degreesTilted,
@@ -55,7 +62,7 @@ export default function Trial({ trialNumber, degreesTilted, tiltDirection, recta
         });
 
         setPhase("blank");
-    }, [phase, onComplete]);
+    }, [phase, onComplete, trialNumber, degreesTilted, tiltDirection, rectangleHeightPercent, rectangleWidthPercent, rectangleColor, prolificId]);
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyPress);
