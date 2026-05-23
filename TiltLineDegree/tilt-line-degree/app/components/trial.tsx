@@ -62,7 +62,7 @@ export default function Trial({ trialNumber, degreesTilted, tiltDirection, recta
         });
 
         setPhase("blank");
-    }, [phase, onComplete]);
+    }, [phase, onComplete, trialNumber, degreesTilted, tiltDirection, rectangleHeightPercent, rectangleWidthPercent, rectangleColor, prolificId]);
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyPress);
