@@ -38,7 +38,7 @@ assert(NUM_POST_PRACTICE_INSTRUCTIONS === POST_PRACTICE_INSTRUCTION_WAIT_DELAY_M
 assert(NUM_INSTRUCTIONS === INSTRUCTION_WAIT_DELAY_MS.length);
 
 
-export const END_SCREEN_URL = "https://app.prolific.co/submissions/complete?cc=C13ACROL";
+export const END_SCREEN_URL = "https://app.prolific.com/submissions/complete?cc=CIF34UQF";
 
 
 // TRIAL PARAMETERS
