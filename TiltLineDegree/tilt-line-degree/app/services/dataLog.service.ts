@@ -2,6 +2,7 @@
 
 import { TrialData } from "../lib/types";
 import { supabase } from "../lib/supabase";
+import { EXPERIMENT_VERSION } from "../lib/constants";
 
 export async function logTrialData(data: TrialData) {
 
@@ -16,6 +17,7 @@ export async function logTrialData(data: TrialData) {
             rectangle_color: data.rectangleColor,
             response: data.response,
             response_time: data.responseTime,
+            experiment_version: EXPERIMENT_VERSION,
         }
     );
     if (error) {

@@ -56,6 +56,10 @@ export const INCORRECT_SOUND_URL = "/sounds/err.mp3";
 
 // EXPERIMENT PARAMETERS
 
+// Stamps every logged row so old and new data can coexist in trials_data_tld.
+// Bump this when the experiment changes; existing rows keep their version.
+export const EXPERIMENT_VERSION = 2;
+
 export const RECTANGLE_COLORS = [
     "#000000"
 ];
@@ -69,23 +73,23 @@ export const HEIGHTS_POSSIBLE = [
 ]
 
 export const DEGREES_POSSIBLE_TRIALS = [
-    ...Array(10).fill(15),
     ...Array(10).fill(10),
     ...Array(10).fill(5),
     ...Array(10).fill(2),
     ...Array(10).fill(1),
+    ...Array(10).fill(0.8),
     ...Array(10).fill(0.5),
-    ...Array(10).fill(0.1),
+    ...Array(10).fill(0.3),
 ]
 
 export const DEGREES_POSSIBLE_PRACTICE = [
-    ...Array(1).fill(15),
     ...Array(1).fill(10),
     ...Array(1).fill(5),
     ...Array(1).fill(2),
     ...Array(1).fill(1),
+    ...Array(1).fill(0.8),
     ...Array(1).fill(0.5),
-    ...Array(1).fill(0.1),
+    ...Array(1).fill(0.3),
 ]
 
 
