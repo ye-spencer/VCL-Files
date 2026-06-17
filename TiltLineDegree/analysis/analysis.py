@@ -8,14 +8,15 @@ from scipy.optimize import minimize
 
 DEBUG = True
 
-NUM_TRIALS_PER_RATIO_GROUP = 10
+NUM_TRIALS_PER_DEGREE_MAGNITUDE = 10
 
 RATIOS = [0.1, 0.5, 1, 2, 5, 10, 15]
 
-EXPECTED_TRIALS_PER_PARTICIPANT = len(RATIOS) * NUM_TRIALS_PER_RATIO_GROUP
+EXPECTED_TRIALS_PER_PARTICIPANT = len(RATIOS) * NUM_TRIALS_PER_DEGREE_MAGNITUDE
 
 FILTER_CORRECT_PERCENTAGE = 0.65
 
+EXPERIMENT_VERSION = 2
 
 ### Step 1: Load environment variables ###
 
@@ -45,6 +46,12 @@ if DEBUG:
 df.drop(df[df["prolific_id"] == "TEST OR UNKNOWN"].index, inplace=True)
 
 print("Number of Trials After Removing Test Participants: ", len(df))
+
+# Select Experiment Version
+
+df.drop(df[df["experiment_version"] != EXPERIMENT_VERSION].index, inplace=True)
+
+print(f"Number of Trials After Selecting Experiment Version {EXPERIMENT_VERSION}: ", len(df))
 
 # Remove Practice Trials
 
@@ -134,48 +141,46 @@ print("\n\n")
 # w_group, g_group = group_res.x
 # print(f"\nGroup-level fit (pooled): w = {w_group:.4f}, g = {g_group:.4f}")
 
-# ### Step 5: Analyze Data | Main Graph with Weber Fit ###
+### Step 5: Analyze Data | Main Graph with Weber Fit ###
 
-# df_valid_participants_correct_by_ratio = df_valid_participants.groupby(["ratio_group", "prolific_id"])["is_correct"].sum().reset_index()
+df_valid_participants_correct_by_ratio = df_valid_participants.groupby(["degree_magnitude", "prolific_id"])["is_correct"].sum().reset_index()
 
-# df_valid_participants_correct_by_ratio["is_correct_ratio"] = df_valid_participants_correct_by_ratio["is_correct"] / NUM_TRIALS_PER_RATIO_GROUP
+df_valid_participants_correct_by_ratio["is_correct_ratio"] = df_valid_participants_correct_by_ratio["is_correct"] / NUM_TRIALS_PER_DEGREE_MAGNITUDE
 
-# if DEBUG:
-#     print(df_valid_participants_correct_by_ratio)
+if DEBUG:
+    print(df_valid_participants_correct_by_ratio)
 
-# final_df = df_valid_participants_correct_by_ratio.groupby("ratio_group")["is_correct_ratio"].agg(["mean", "std"]).reset_index()
+final_df = df_valid_participants_correct_by_ratio.groupby("degree_magnitude")["is_correct_ratio"].agg(["mean", "std"]).reset_index()
 
-# final_df["std_err"] = final_df["std"] / np.sqrt(NUM_VALID_PARTICIPANTS)
+final_df["std_err"] = final_df["std"] / np.sqrt(NUM_VALID_PARTICIPANTS)
 
-# final_df["ratio_value"] = final_df["ratio_group"].apply(lambda x: RATIOS[x])
+if DEBUG:
+    print(final_df)
 
-# if DEBUG:
-#     print(final_df)
+# Create a graph of the data. y-axis is from 0.5 to 1.0 representing the proportion of correct responses. x-axis is 1 to 1.6 representing the ratio group. There should be a std_err for each point.
 
-# # Create a graph of the data. y-axis is from 0.5 to 1.0 representing the proportion of correct responses. x-axis is 1 to 1.6 representing the ratio group. There should be a std_err for each point.
+import matplotlib.pyplot as plt
 
-# import matplotlib.pyplot as plt
+final_df_sorted = final_df.sort_values("degree_magnitude")
 
-# final_df_sorted = final_df.sort_values("ratio_value")
+fig, ax = plt.subplots(figsize=(8, 5))
 
-# fig, ax = plt.subplots(figsize=(8, 5))
+ax.errorbar(
+    final_df_sorted["degree_magnitude"],
+    final_df_sorted["mean"],
+    yerr=final_df_sorted["std_err"],
+    fmt="o",
+    capsize=4,
+    capthick=1,
+    markersize=7,
+    linewidth=1,
+    color="#2b6cb0",
+    ecolor="#4a5568",
+    alpha=0.5,
+    label="Proportion Correct",
+)
 
-# ax.errorbar(
-#     final_df_sorted["ratio_value"],
-#     final_df_sorted["mean"],
-#     yerr=final_df_sorted["std_err"],
-#     fmt="o",
-#     capsize=4,
-#     capthick=1,
-#     markersize=7,
-#     linewidth=1,
-#     color="#2b6cb0",
-#     ecolor="#4a5568",
-#     alpha=0.5,
-#     label="Proportion Correct",
-# )
-
-# # Overlay Weber model fit (pooled across participants)
+# Overlay Weber model fit (pooled across participants)
 # r_grid = np.linspace(1.0, 1.55, 200)
 # ax.plot(
 #     r_grid,
@@ -185,19 +190,19 @@ print("\n\n")
 #     label=f"Weber fit (w={w_group:.3f}, g={g_group:.3f})",
 # )
 
-# ax.set_xlim(1.0, 1.55)
-# ax.set_ylim(0.5, 1.0)
-# ax.set_xlabel("Rectangle Height Ratio (Larger / Smaller)", fontsize=12)
-# ax.set_ylabel("Proportion Correct", fontsize=12)
-# ax.set_title("Accuracy by Rectangle Ratio", fontsize=14)
-# ax.legend(loc="lower right")
-# ax.grid(True, alpha=0.3)
+ax.set_xlim(0, 11)
+ax.set_ylim(0.5, 1.0)
+ax.set_xlabel("Degree Tilt", fontsize=12)
+ax.set_ylabel("Proportion Correct", fontsize=12)
+ax.set_title("Accuracy by Degree Tilt", fontsize=14)
+ax.legend(loc="lower right")
+ax.grid(True, alpha=0.3)
 
-# plt.tight_layout()
-# plt.savefig("accuracy_by_ratio.png", dpi=300)
-# plt.show()
+plt.tight_layout()
+plt.savefig("accuracy_by_ratio.png", dpi=300)
+plt.show()
 
-# print("Graph saved to accuracy_by_ratio.png")
+print("Graph saved to accuracy_by_ratio.png")
 
 
 
