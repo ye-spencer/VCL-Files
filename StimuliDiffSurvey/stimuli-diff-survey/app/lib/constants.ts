@@ -1,7 +1,7 @@
 // INTRO / END SCREEN
 
 export const INTRO_TEXT =
-    "In this experiment, you will be asked two questions" +
+    "In this experiment, you will be asked two questions. " +
     "Each question presents a piece of background information followed by a statement. For each statement, " +
     "you will indicate how strongly you agree or disagree by clicking on a response bar. ";
 
