@@ -1,7 +1,5 @@
+import Experiment from "./Experiment";
+
 export default function Home() {
-  return (
-    <div>
-      COOKED
-    </div>
-  );
+  return <Experiment />;
 }
