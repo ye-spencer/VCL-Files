@@ -47,7 +47,7 @@ export default function Experiment() {
   const imgSize = page.layout === "grid" ? "max-h-52 w-auto" : "max-h-72 w-auto";
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-8 p-8">
+    <main className="flex flex-1 flex-col items-center justify-start gap-8 p-8 pt-16">
       <p className="max-w-2xl text-center text-2xl leading-relaxed">
         {page.text}
       </p>

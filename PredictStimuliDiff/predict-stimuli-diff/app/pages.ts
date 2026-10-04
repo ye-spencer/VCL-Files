@@ -61,13 +61,13 @@ export const PAGES: Page[] = [
   },
   {
     id: "x-axis",
-    text: "In each figure, the bottom axis shows the numbers of grains to be compared. The easiest trials appear on the right (e.g., 6000 versus 4000 grains) and the hardest on the left (e.g., 6000 versus 6001 grains), with relevant trials in between.",
+    text: "In each of the figures you will see, the bottom axis shows the numbers of grains to be compared. The easiest trials appear on the right (e.g., 6000 versus 4000 grains of sand) and the hardest trials on the left (e.g., 6000 versus 6001 grains of sand) with some relevant trials noted in between (e.g., 6000 versus 5600 grains of sand).",
     images: [{ src: "/A.png", alt: "The horizontal axis of comparisons" }],
     waitSeconds: 5,
   },
   {
     id: "y-axis",
-    text: "The vertical axis shows the number of people, out of 100, who will choose the correct bag of sand (i.e., with their eyes closed, will be able to feel which bag is heavier).",
+    text: "The vertical axis will show the number of people, out of 100, who will choose the correct bag of sand (i.e., with their eyes closed, will be able to feel which bag is heavier).",
     images: [{ src: "/B.png", alt: "Empty graph axes" }],
     waitSeconds: 5,
   },
@@ -79,25 +79,25 @@ export const PAGES: Page[] = [
   },
   {
     id: "anchor-easy",
-    text: "The creators provide two values to guide us. For the easiest trial (6000 vs 4000), they estimate that 99 people out of 100 will get it correct — this trial is easy enough that nearly everyone can feel which bag is heavier.",
+    text: "The creators of the experiment have provided two values to guide us. For the easiest trial (e.g., 6000 vs 4000), the creators estimate that “99 people out of 100 will get this correct” – because this trial is easy enough that nearly all people will successfully feel which bag is heavier.",
     images: [{ src: "/C.png", alt: "Graph with the easiest trial marked “Getting it Right!”" }],
     waitSeconds: 5,
   },
   {
     id: "anchor-hard",
-    text: "For the hardest trial (6000 vs 6001), they estimate that 51 people out of 100 will get it correct — this trial is so difficult that people are near chance. Guessing alone is right half the time, which is why the worst performance is 50 out of 100.",
+    text: "For the hardest trial (e.g., 6000 vs 6001), the creators estimate that “51 people out of 100 will get this correct” – because this trial is so difficult that people are very close to chance performance. Notice that guessing would result in getting it correct half the time (just by chance) and getting it wrong half of the time – this is why the worst performance is at 50 people out of 100.",
     images: [{ src: "/D.png", alt: "Graph with the hardest trial marked “At Chance!”" }],
     waitSeconds: 5,
   },
   {
     id: "preview",
-    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials? We’ll show you 5 possible graphs.",
+    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 5 possible graphs.",
     images: [{ src: "/E.png", alt: "Graph with only the easiest and hardest trials marked" }],
     waitSeconds: 4,
   },
   {
     id: "question",
-    text: "For each comparison dot, how many people out of 100 will choose the correct bag? Which pattern do you feel is most likely to match the actual performance of regular human participants? (Choose one.)",
+    text: "For each comparison dot, how many people out of 100 will choose the correct bag? Which pattern do you feel is the most likely to match the actual performance of regular human participants (choose one).",
     images: [
       { src: "/F.png", alt: "Candidate graph 1", selectable: true },
       { src: "/G.png", alt: "Candidate graph 2", selectable: true },
