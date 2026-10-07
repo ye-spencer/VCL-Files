@@ -69,8 +69,8 @@ export default function Experiment() {
   const order = orders[page.id] ?? images.map((_, i) => i);
   const containerClass =
     page.layout === "grid"
-      ? "grid w-full max-w-4xl grid-cols-2 place-items-center gap-3 md:grid-cols-3"
-      : "flex flex-wrap items-start justify-center gap-6";
+      ? "grid w-full max-w-4xl grid-cols-2 place-items-center gap-x-3 gap-y-1 md:grid-cols-3"
+      : "flex flex-wrap items-start justify-center gap-3";
   // Capped heights so a grid of images fits a typical screen without scrolling.
   const imgSize = page.layout === "grid" ? "max-h-52 w-auto" : "max-h-72 w-auto";
 
@@ -89,12 +89,12 @@ export default function Experiment() {
 
   return (
     <main className="flex flex-1 flex-col items-center justify-start gap-8 p-8 pt-16">
-      <p className="max-w-2xl text-center text-2xl leading-relaxed">
+      <p className="max-w-4xl text-center text-2xl leading-relaxed">
         {page.text}
       </p>
 
       {images.length > 0 && (
-        <div className={containerClass}>
+        <div className={`${containerClass} mt-auto`}>
           {order.map((origIndex) => {
             const img = images[origIndex];
             const isSelected = selected === origIndex;
@@ -116,9 +116,12 @@ export default function Experiment() {
                       : "border-transparent",
                   ].join(" ")}
                 />
-                {img.caption && (
+                {/* Reserve the caption slot for the bag images (even when the
+                    caption is absent) so they stay aligned across pages; other
+                    images get no caption line. */}
+                {img.src.includes("bag") && (
                   <figcaption className="text-base text-black/70">
-                    {img.caption}
+                  {img.caption ?? " "}
                   </figcaption>
                 )}
               </figure>
@@ -132,7 +135,7 @@ export default function Experiment() {
         live here, one visible at a time, so swapping between them never
         shifts the content above.
       */}
-      <div className="flex h-16 items-center justify-center">
+      <div className={`flex h-16 items-center justify-center ${images.length === 0 ? "mt-auto" : ""}`}>
         {canContinue ? (
           page.link ? (
             <a
