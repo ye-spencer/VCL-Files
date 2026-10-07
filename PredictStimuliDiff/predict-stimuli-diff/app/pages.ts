@@ -51,7 +51,7 @@ export const PAGES: Page[] = [
     id: "grains",
     text: "The creators of the experiment have a “sand grain counter” and will use the numbers of grains of sand as a stand-in for the weight of each bag.",
     images: [
-      { src: "/bag_left.png", alt: "A bag of sand", caption: "5000 grains of sand" },
+      { src: "/bag_left.png", alt: "A bag of sand", caption: "4000 grains of sand" },
       { src: "/bag_right.png", alt: "A bag of sand", caption: "6000 grains of sand" },
     ],
     waitSeconds: 5,
