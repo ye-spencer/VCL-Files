@@ -39,6 +39,10 @@ export default function Experiment() {
   // Fraction of the wait elapsed (0 -> 1). Resets on every page.
   const [progress, setProgress] = useState(0);
 
+  // Status of saving a recorded page's response before advancing.
+  const [saving, setSaving] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
+
   const page = PAGES[index];
   const selected = answers[page.id]; // selected image index, or undefined
 
@@ -76,13 +80,22 @@ export default function Experiment() {
 
   // Advance to the next page. On a selection page, record the response (the
   // displayed order and the chosen image) at this point — not on every click.
-  const handleNext = () => {
+  // Stay on the page if saving fails so the participant can retry.
+  const handleNext = async () => {
     if (page.record && selected !== undefined) {
-      recordResponse({
-        pageId: page.id,
-        order: order.map((k) => images[k].src),
-        selected: images[selected].src,
-      });
+      setSaving(true);
+      setSaveFailed(false);
+      try {
+        await recordResponse({
+          order: order.map((k) => images[k].src),
+          selected: images[selected].src,
+        });
+      } catch {
+        setSaveFailed(true);
+        return;
+      } finally {
+        setSaving(false);
+      }
     }
     if (!isLast) setIndex((i) => i + 1);
   };
@@ -147,10 +160,16 @@ export default function Experiment() {
           ) : (
             <button
               onClick={handleNext}
-              disabled={isLast}
+              disabled={isLast || saving}
               className="rounded-lg bg-blue-800 px-6 py-3 text-lg text-white disabled:opacity-50"
             >
-              {isLast ? "Done" : "Next"}
+              {isLast
+                ? "Done"
+                : saving
+                  ? "Saving…"
+                  : saveFailed
+                    ? "Couldn’t save — try again"
+                    : "Next"}
             </button>
           )
         ) : (

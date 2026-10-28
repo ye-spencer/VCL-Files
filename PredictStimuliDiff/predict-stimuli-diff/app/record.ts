@@ -1,13 +1,19 @@
-// Stub for recording a participant's response. Later this will POST to the
-// backend; for now it just logs so the shape is easy to see.
+"use server";
+
+// Records a participant's response to the `responses` table (db/schema.sql).
+// This is a Server Function: it runs on the server, but is callable from the
+// client like a normal async function.
+
+import { sql } from "./db";
 
 export type Response = {
-  pageId: string;
   order: string[]; // image srcs in the order they were displayed
   selected: string; // src of the image the participant chose
 };
 
-export function recordResponse(response: Response) {
-  // TODO: replace with a POST to the backend.
-  console.log("recordResponse", response);
+export async function recordResponse({ order, selected }: Response) {
+  await sql`
+    insert into responses (display_order, selected)
+    values (${order}, ${selected})
+  `;
 }
