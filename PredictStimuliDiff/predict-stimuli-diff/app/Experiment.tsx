@@ -87,6 +87,9 @@ export default function Experiment() {
       setSaveFailed(false);
       try {
         await recordResponse({
+          // Prolific appends this to the study link; the URL never changes
+          // during the experiment, so it's still there at submission.
+          prolificPid: new URLSearchParams(window.location.search).get("PROLIFIC_PID"),
           order: order.map((k) => images[k].src),
           selected: images[selected].src,
         });
