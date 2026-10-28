@@ -58,7 +58,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "five-graphs",
-    text: "You will be presented with 5 different graphs that show the possible outcomes from many such comparisons and your job will be to decide which one appears to be the correct graph.",
+    text: "You will be presented with 6 different graphs that show the possible outcomes from many such comparisons and your job will be to decide which one appears to be the correct graph.",
     waitSeconds: 5,
   },
   {
@@ -93,7 +93,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "preview",
-    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 5 possible graphs.",
+    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 6 possible graphs.",
     images: [{ src: "/E.png", alt: "Graph with only the easiest and hardest trials marked" }],
     waitSeconds: 5,
   },
@@ -106,6 +106,7 @@ export const PAGES: Page[] = [
       { src: "/H.png", alt: "Candidate graph 3", selectable: true },
       { src: "/I.png", alt: "Candidate graph 4", selectable: true },
       { src: "/J.png", alt: "Candidate graph 5", selectable: true },
+      { src: "/K.png", alt: "Candidate graph 6", selectable: true },
     ],
     layout: "grid",
     waitSeconds: 10,
