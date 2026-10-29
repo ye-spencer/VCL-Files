@@ -30,7 +30,7 @@ export type Page = {
 };
 
 // Where the final page sends participants back to. Change this as needed.
-export const PROLIFIC_RETURN_URL = "https://app.prolific.com/submissions/complete";
+export const PROLIFIC_RETURN_URL = "https://app.prolific.com/submissions/complete?cc=CI7BRYWK";
 
 export const PAGES: Page[] = [
   {
