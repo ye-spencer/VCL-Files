@@ -4,9 +4,11 @@
 
 Traces the top edge of the flames (where the fire meets the brick wall) in every frame of the fire video, then averages the y position of that edge at each x position. The result is a pyramid-like line showing where the fire's outline sits on average, with a ±1 SD band showing how much the flames jump around. This is meant to be compared against people's ratings to show how well they agree with the shape of the fire.
 
-`a_trace_edge.py` finds the edge in each frame and saves the per-frame edges, the mean trace (`data/fire_edge_trace.csv`), and an average frame. `b_plot_trace.py` makes the figures in `outputs`. `c_overlay_heatmap.py` draws the mean edge on the pretty and dangerous chunk heatmaps from `001_danger_vs_pretty` (its `averaged_data.csv` is copied into `data`).
+`a_trace_edge.py` finds the edge in each frame and saves the per-frame edges, the mean trace (`data/fire_edge_trace.csv`), and an average frame. `b_plot_trace.py` makes the figures in `outputs`. `c_overlay_heatmap.py` draws the mean edge on pretty and dangerous chunk heatmaps of the ratings in `data/averaged_data.csv`. Pretty is the jeweler pretty question ("Less Pretty Stone" to "More Pretty Stone") and dangerous is "Less Good for Danger Signal" to "More Good for Danger Signal". Each chunk's score is its mean `averaged_value`.
 
-On the heatmaps the line is compressed into chunk coordinates. Each chunk's samples came from a 348 x 240 px region of the video (348, not 384, because of the known error in `FinalExperiment/GeneratingSuperpixels`), so the 10 columns only cover x = 0 to 3480 and the line is cut off there.
+The rule for every heatmap: one cell is one chunk offset, 384 x 240 px of video, where 384 is the chunk offset established in the missing gaps analysis. Chunk n's column covers x = 384n to 384n + 384, so the 10 x 9 grid spans the full 3840 x 2160 frame. On the pretty and dangerous heatmaps the cells are square, so the line is compressed into chunk coordinates.
+
+`c_overlay_heatmap.py` also makes a third heatmap, `pretty_plus_dangerous_by_chunk_with_edge.png`. Each word's chunk scores are min-max scaled to a percentage, (score - min) / (max - min) * 100, and the two percentages are added (0 to 200). Each cell is drawn at its 384 x 240 px size, so the heatmap is the same size as the video and the line is drawn in video pixels without being compressed.
 
 Everywhere else, coordinates are in video pixels (3840 x 2160, y = 0 at the top).
 
