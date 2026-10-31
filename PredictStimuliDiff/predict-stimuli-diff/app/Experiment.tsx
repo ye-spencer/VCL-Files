@@ -73,8 +73,8 @@ export default function Experiment() {
   const order = orders[page.id] ?? images.map((_, i) => i);
   const containerClass =
     page.layout === "grid"
-      ? "grid w-full max-w-4xl grid-cols-2 place-items-center gap-x-3 gap-y-1 md:grid-cols-3"
-      : "flex flex-wrap items-start justify-center gap-3";
+      ? `grid w-full max-w-4xl grid-cols-2 place-items-center md:grid-cols-3 ${page.gapClass ?? "gap-x-3 gap-y-1"}`
+      : `flex flex-wrap items-start justify-center ${page.gapClass ?? "gap-3"}`;
   // Capped heights so a grid of images fits a typical screen without scrolling.
   const imgSize = page.layout === "grid" ? "max-h-52 w-auto" : "max-h-72 w-auto";
 
