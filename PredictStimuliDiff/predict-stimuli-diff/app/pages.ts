@@ -22,6 +22,7 @@ export type Page = {
   text: string;
   images?: Image[];
   layout?: "row" | "grid"; // how to arrange multiple images (default "row")
+  gapClass?: string; // optional Tailwind override for the spacing between images
   waitSeconds: number;
   requireSelection?: boolean;
   record?: boolean; // record the response (order + selection) when leaving the page
@@ -58,7 +59,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "five-graphs",
-    text: "You will be presented with 6 different graphs that show the possible outcomes from many such comparisons and your job will be to decide which one appears to be the correct graph.",
+    text: "You will be presented with 2 different graphs that show the possible outcomes from many such comparisons and your job will be to decide which one appears to be the correct graph.",
     waitSeconds: 5,
   },
   {
@@ -93,7 +94,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "preview",
-    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 6 possible graphs.",
+    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 2 possible graphs.",
     images: [{ src: "/E.png", alt: "Graph with only the easiest and hardest trials marked" }],
     waitSeconds: 5,
   },
@@ -101,14 +102,10 @@ export const PAGES: Page[] = [
     id: "question",
     text: "For each comparison dot, how many people out of 100 will choose the correct bag? Which pattern do you feel is the most likely to match the actual performance of regular human participants (choose one).",
     images: [
-      { src: "/F.png", alt: "Candidate graph 1", selectable: true },
-      { src: "/G.png", alt: "Candidate graph 2", selectable: true },
-      { src: "/H.png", alt: "Candidate graph 3", selectable: true },
-      { src: "/I.png", alt: "Candidate graph 4", selectable: true },
-      { src: "/J.png", alt: "Candidate graph 5", selectable: true },
-      { src: "/K.png", alt: "Candidate graph 6", selectable: true },
+      { src: "/G.png", alt: "Candidate graph 1", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
+      { src: "/H.png", alt: "Candidate graph 2", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
     ],
-    layout: "grid",
+    gapClass: "gap-16",
     waitSeconds: 10,
     requireSelection: true,
     record: true,
