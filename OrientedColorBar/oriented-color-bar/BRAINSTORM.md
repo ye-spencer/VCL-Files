@@ -19,7 +19,7 @@ The second is our main question screen component. This will also have a few para
 - diff_orientation - int # Degrees difference of the stick matching the redundant singleton
 
 We will need a function that determines what the entire experiment ends up being for a specific participant, it will line up an array with different screens and data for display in each screen. It will build with the following patterns
-- miniblocks: 2-5 in a row of either diff color or diff orientation
+- miniblocks: 2-5 in a row of either diff color or diff orientation; nothing to chose between the 2-5, it just appears and disappears on 500ms.
 - redundant trial: different color and different orientation
 - main question: 1 of either changed color or changed orientation
 
@@ -40,9 +40,13 @@ We need a database to store all of our information, including this per trial
 - trial display information (used to populate the screen)
 - correct or incorrect
 
+The goal is to try to nudge people into either using their color visual cue or orientation visual cue.
+
+We only ask a question on which one is correct after the redundant.
+
 
 Concerns
 - Description says start at +/- 20, and decrease by 5 degrees, so after 4 more corrects than incorrects, they are the same, perhaps a proportional decrease/increase
-- Is hue degree different and orientation degree difference equal? Because we have color difference 90 to 180 and oriention difference 10 to 45, but then we stay at 20 degrees +/- 5 for both main questions
+- Is hue degree different and orientation degree difference equal? Because we have color difference 90 to 180 and oriention difference 10 to 45, but then we stay at 20 degrees +/- 5 for both main questions - We will adjust once we get a prototype.
 - What is the question are we asking for each trial?
-- What are the prompts that we are giving initially?
+- What are the prompts that we are giving initially? - Coming Later. I can make it up as we go too.
