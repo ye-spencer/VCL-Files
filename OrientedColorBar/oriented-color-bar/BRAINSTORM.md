@@ -10,7 +10,7 @@ We should have a few main displays, the first is our main experiment screen comp
 - diff_color_number - integer, optional # position of the stick with a different color
 - diff_color_degree - integer, optional # color of the stick with a different color
 
-The second is our main question screen component. This will also have a few parameters, and will display one stick on the left hand side and one stick on the right hand sid.
+The second is our main question screen component. This will also have a few parameters, and will display one stick on the left hand side and one stick on the right hand sid. It will wait until the user clicks either p or q denoting the side, then record all of the necessary information.
 - trial_type - string # Either orientation or color
 - which_correct - string # Either left or right
 - correct_color - int # Color of the stick matching the redundant singleton
@@ -18,10 +18,11 @@ The second is our main question screen component. This will also have a few para
 - correct_orientation - int # Orientation of the stick matching the redundant singleton
 - diff_orientation - int # Degrees difference of the stick matching the redundant singleton
 
-We will need a function that determines what the entire experiment ends up being for a specific participant, it will line up an array with different screens and data for display in each screen. It will build with the following patterns
+We will need a function that determines what the entire experiment ends up being for a specific participant, it will line up an array with different screens and data for display in each screen. It will build with the following pattern each time it is called:
 - miniblocks: 2-5 in a row of either diff color or diff orientation; nothing to chose between the 2-5, it just appears and disappears on 500ms.
 - redundant trial: different color and different orientation
 - main question: 1 of either changed color or changed orientation
+- return the necessary results
 
 There are also these rules
 - diff_color_degree is between 90 and 180 degrees off
@@ -36,7 +37,8 @@ We should have a trial number track, so people know how much they have completed
 We need a database to store all of our information, including this per trial
 - profilic id
 - which trial number they are on (1 to ~100)
-  - Monotonically increasing for all trials, normal, redundant, main
+  - Monotonically increasing for all trials
+- type of 
 - trial display information (used to populate the screen)
 - correct or incorrect
 
