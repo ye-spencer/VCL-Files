@@ -147,6 +147,20 @@ group_res = minimize(nll_wg, WG_START, args=(r_all, y_all), method="L-BFGS-B", b
 w_group, g_group = group_res.x
 print(f"\nGroup-level fit (pooled): w = {w_group:.4f}, g = {g_group:.4f}")
 
+### Step 4c: Export Per-Participant Accuracy by Ratio Group ###
+
+# One row per participant, one column per ratio group (ordered smallest to largest ratio)
+accuracy_by_participant = df_valid_participants.groupby(["prolific_id", "ratio_group"])["is_correct"].mean().unstack("ratio_group")
+
+accuracy_by_participant = accuracy_by_participant.reindex(columns=target_labels)
+
+# "A: 51:50" -> "ratio_51_50" (Excel would read a bare "51:50" as a time)
+accuracy_by_participant.columns = ["ratio_" + label.split(": ")[1].replace(":", "_") for label in target_labels]
+
+accuracy_by_participant.to_csv("accuracy_by_participant_ratio.csv")
+
+print(f"\nWrote accuracy_by_participant_ratio.csv ({len(accuracy_by_participant)} participants)")
+
 ### Step 5: Analyze Data | Main Graph with Weber Fit ###
 
 df_valid_participants_correct_by_ratio = df_valid_participants.groupby(["ratio_group", "prolific_id"])["is_correct"].sum().reset_index()

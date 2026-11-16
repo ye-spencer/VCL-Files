@@ -152,7 +152,15 @@ df_valid_participants_correct_by_ratio["is_correct_ratio"] = df_valid_participan
 if DEBUG:
     print(df_valid_participants_correct_by_ratio)
 
-final_df = df_valid_participants_correct_by_ratio.groupby("degree_magnitude")["is_correct_ratio"].agg(["mean", "std"]).reset_index()
+# Export per-participant accuracy for each degree magnitude (one row per participant, one column per degree)
+
+accuracy_by_participant_degree = df_valid_participants_correct_by_ratio.pivot(index="prolific_id", columns="degree_magnitude", values="is_correct_ratio")
+
+accuracy_by_participant_degree.to_csv("tilt_line_degree_accuracy_by_participant_degree.csv")
+
+print("CSV saved to tilt_line_degree_accuracy_by_participant_degree.csv")
+
+final_df =df_valid_participants_correct_by_ratio.groupby("degree_magnitude")["is_correct_ratio"].agg(["mean", "std"]).reset_index()
 
 final_df["std_err"] = final_df["std"] / np.sqrt(NUM_VALID_PARTICIPANTS)
 
