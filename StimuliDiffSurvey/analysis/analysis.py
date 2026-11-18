@@ -5,7 +5,8 @@ Pulls every response from the Supabase table `survey_responses_sds` (credentials
 from analysis/.env) and writes two figures to analysis/figures/:
 
     score_histogram.png  responses grouped into bins along the bar
-    score_dotplot.png    one dot per participant, at the exact position they clicked
+    score_dotplot.png    one circle per participant, at the exact position they clicked,
+                         drawn on the response bar with a line at the mean
 
 Scores are the canonical agreement score logged by the survey
 (0 = Strongly Disagree end of the bar, 100 = Strongly Agree end), so participants
@@ -14,14 +15,16 @@ who saw the flipped bar are already on the same axis as everyone else.
 Usage: python analysis.py
 """
 
+import math
 import os
+import random
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import requests
 from dotenv import load_dotenv
 from matplotlib.collections import PatchCollection
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle, FancyBboxPatch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIGURE_DIR = os.path.join(HERE, "figures")
@@ -42,9 +45,17 @@ SCALE_LABEL_POSITIONS = [0, 37.5, 62.5, 100]
 SCALE_LABEL_ALIGNMENT = ["left", "center", "center", "right"]
 
 BIN_WIDTH = 5  # histogram bin width, in score points
-DOT_DIAMETER = 1.6  # dot plot dot size, in score points
+
+# Dot plot geometry, in score points.
+DOT_DIAMETER = 1.0
+BAR_HEIGHT = 8
+BAR_ROUNDING = 0.8
+MEAN_OVERHANG = 1  # how far the mean line sticks out past the bar
+JITTER_TRIES = 30  # random heights tried per dot before settling for the roomiest
 
 COLOR = "#2a78d6"
+MEAN_COLOR = "#2f5be6"
+BAR_COLOR = "#e4e4e4"
 SURFACE = "#fcfcfb"
 TEXT_PRIMARY = "#0b0b0b"
 TEXT_SECONDARY = "#52514e"
@@ -96,8 +107,10 @@ def panel_title(ax, question_id, values):
     title = QUESTION_TITLES.get(question_id, question_id)
     mean = sum(values) / len(values)
     ax.set_title(title, loc="left", fontsize=11, color=TEXT_PRIMARY, fontweight="bold")
-    ax.text(1, 1.02, f"n = {len(values)}   mean = {mean:.1f}", transform=ax.transAxes,
-            ha="right", va="bottom", fontsize=9, color=TEXT_SECONDARY)
+    # Offset like the title so the two share a baseline whatever the panel height.
+    ax.annotate(f"n = {len(values)}   mean = {mean:.1f}", xy=(1, 1), xycoords="axes fraction",
+                xytext=(0, plt.rcParams["axes.titlepad"]), textcoords="offset points",
+                ha="right", va="baseline", fontsize=9, color=TEXT_SECONDARY)
 
 
 def plot_histogram(scores, path):
@@ -120,49 +133,65 @@ def plot_histogram(scores, path):
     plt.close(fig)
 
 
-def stack_dots(values, spacing):
+def jitter_dots(values, low, high, spacing):
     """
-    Place each value at its exact x and stack it on the lowest row where it
-    doesn't overlap a neighbor, so dense regions build up like histogram bars.
-    Returns a list of (x, row) pairs.
+    Place each value at its exact x and give it a random height between low and
+    high, scattering the dots across the bar. Each dot keeps the first random
+    height that clears every dot already placed, or the roomiest one tried in
+    crowded regions. Returns a list of (x, y) pairs.
     """
-    row_ends = []  # rightmost x placed on each row so far
+    rng = random.Random(0)  # fixed seed so reruns draw the same figure
     placed = []
     for x in sorted(values):
-        for row, end in enumerate(row_ends):
-            if x - end >= spacing:
-                row_ends[row] = x
-                placed.append((x, row))
+        best_y, best_gap = None, -1
+        for _ in range(JITTER_TRIES):
+            y = rng.uniform(low, high)
+            gap = min((math.dist((x, y), dot) for dot in placed), default=math.inf)
+            if gap > best_gap:
+                best_y, best_gap = y, gap
+            if gap >= spacing:
                 break
-        else:
-            row_ends.append(x)
-            placed.append((x, len(row_ends) - 1))
+        placed.append((x, best_y))
     return placed
 
 
 def plot_dots(scores, path):
     spacing = DOT_DIAMETER * 1.15  # small gap between neighboring dots
-    stacks = {q: stack_dots(values, spacing) for q, values in scores.items()}
-    rows = max(row for placed in stacks.values() for _, row in placed) + 1
-    top = rows * spacing
+    inset = DOT_DIAMETER * 0.75  # keeps dots off the bar's top and bottom edges
+    bottom, top = -MEAN_OVERHANG, BAR_HEIGHT + MEAN_OVERHANG
 
-    # Equal aspect keeps dots round, so panel height follows the tallest stack.
-    panel_height = 8.4 * top / 104 + 0.6
+    # Equal aspect keeps dots round, so panel height follows the bar height.
+    panel_height = 8.4 * (top - bottom) / 104 + 0.75
     fig, axes = plt.subplots(len(scores), 1, figsize=(9, panel_height * len(scores) + 0.5),
-                             sharex=True, sharey=True, layout="constrained")
+                             layout="constrained")
     fig.set_facecolor(SURFACE)
 
-    for ax, (question_id, placed) in zip(axes, stacks.items()):
-        style_axes(ax)
-        dots = [Circle((x, (row + 0.5) * spacing), DOT_DIAMETER / 2) for x, row in placed]
-        ax.add_collection(PatchCollection(dots, facecolor=COLOR, edgecolor="none", zorder=2))
-        ax.set_ylim(0, top)
+    for ax, (question_id, values) in zip(axes, scores.items()):
+        ax.set_facecolor(SURFACE)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.tick_params(length=0, pad=6)
+        ax.set_xlim(-2, 102)
+        ax.set_ylim(bottom, top)
         ax.set_aspect("equal")
         ax.set_yticks([])
-        panel_title(ax, question_id, scores[question_id])
 
-    label_scale(axes[-1])
-    fig.suptitle("Agreement scores, one dot per participant at the exact point clicked",
+        # The response bar as participants saw it, with the mean marked across it.
+        ax.add_patch(FancyBboxPatch((0, 0), 100, BAR_HEIGHT,
+                                    boxstyle=f"round,pad=0,rounding_size={BAR_ROUNDING}",
+                                    facecolor=BAR_COLOR, edgecolor="none", zorder=1))
+        mean = sum(values) / len(values)
+        ax.plot([mean, mean], [bottom, top], color=MEAN_COLOR, linewidth=2.5,
+                solid_capstyle="butt", zorder=2)
+
+        placed = jitter_dots(values, inset, BAR_HEIGHT - inset, spacing)
+        dots = [Circle(xy, DOT_DIAMETER / 2) for xy in placed]
+        ax.add_collection(PatchCollection(dots, facecolor="none", edgecolor=TEXT_PRIMARY,
+                                          linewidth=1, zorder=3))
+        label_scale(ax)
+        panel_title(ax, question_id, values)
+
+    fig.suptitle("Agreement scores: one circle per participant, blue line at the mean",
                  x=0.01, ha="left", fontsize=13, color=TEXT_PRIMARY)
     fig.savefig(path, dpi=200)
     plt.close(fig)
