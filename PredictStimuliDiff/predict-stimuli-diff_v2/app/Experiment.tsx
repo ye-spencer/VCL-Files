@@ -1,0 +1,199 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { PAGES } from "./pages";
+import { recordResponse } from "./record";
+
+// Fisher-Yates shuffle, returns a new array.
+function shuffled<T>(items: T[]): T[] {
+  const a = [...items];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export default function Experiment() {
+  // Current page index. Managed in state only — no URL, so no skipping.
+  const [index, setIndex] = useState(0);
+
+  // Selected image index (into the page's original `images`), per page id.
+  // Storing the original index keeps the answer stable even when shuffled.
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+
+  // Display order per page id: a permutation of the original image indices.
+  // Built once on mount (client-only) so each session gets a fresh order and
+  // there is no server/client hydration mismatch.
+  const [orders, setOrders] = useState<Record<string, number[]>>({});
+  useEffect(() => {
+    const next: Record<string, number[]> = {};
+    for (const p of PAGES) {
+      if (p.shuffle && p.images) {
+        next[p.id] = shuffled(p.images.map((_, i) => i));
+      }
+    }
+    setOrders(next);
+  }, []);
+
+  // Fraction of the wait elapsed (0 -> 1). Resets on every page.
+  const [progress, setProgress] = useState(0);
+
+  // Status of saving a recorded page's response before advancing.
+  const [saving, setSaving] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
+
+  const page = PAGES[index];
+  const selected = answers[page.id]; // selected image index, or undefined
+
+  // Run the waiting bar whenever the page changes.
+  useEffect(() => {
+    setProgress(0);
+    const total = page.waitSeconds * 1000;
+    if (total <= 0) {
+      setProgress(1);
+      return;
+    }
+    const start = Date.now();
+    const timer = setInterval(() => {
+      const fraction = Math.min((Date.now() - start) / total, 1);
+      setProgress(fraction);
+      if (fraction >= 1) clearInterval(timer);
+    }, 50);
+    return () => clearInterval(timer);
+  }, [index, page.waitSeconds]);
+
+  const waitDone = progress >= 1;
+  const needsAnswer = page.requireSelection && selected === undefined;
+  const canContinue = waitDone && !needsAnswer;
+  const isLast = index === PAGES.length - 1;
+
+  const images = page.images ?? [];
+  // Display order: the shuffled permutation if present, else natural order.
+  const order = orders[page.id] ?? images.map((_, i) => i);
+  const containerClass =
+    page.layout === "grid"
+      ? `grid w-full max-w-4xl grid-cols-2 place-items-center md:grid-cols-3 ${page.gapClass ?? "gap-x-3 gap-y-1"}`
+      : `flex flex-wrap items-start justify-center ${page.gapClass ?? "gap-3"}`;
+  // Capped heights so a grid of images fits a typical screen without scrolling.
+  const imgSize = page.layout === "grid" ? "max-h-52 w-auto" : "max-h-72 w-auto";
+
+  // Advance to the next page. On a selection page, record the response (the
+  // displayed order and the chosen image) at this point — not on every click.
+  // Stay on the page if saving fails so the participant can retry.
+  const handleNext = async () => {
+    if (page.record && selected !== undefined) {
+      setSaving(true);
+      setSaveFailed(false);
+      try {
+        await recordResponse({
+          // Prolific appends this to the study link; the URL never changes
+          // during the experiment, so it's still there at submission.
+          prolificPid: new URLSearchParams(window.location.search).get("PROLIFIC_PID"),
+          order: order.map((k) => images[k].src),
+          selected: images[selected].src,
+        });
+      } catch {
+        setSaveFailed(true);
+        return;
+      } finally {
+        setSaving(false);
+      }
+    }
+    if (!isLast) setIndex((i) => i + 1);
+  };
+
+  return (
+    <main className="flex flex-1 flex-col items-center justify-start gap-8 p-8 pt-16">
+      <p className="max-w-4xl text-center text-2xl leading-relaxed">
+        {page.text}
+      </p>
+
+      {images.length > 0 && (
+        <div className={`${containerClass} mt-auto`}>
+          {order.map((origIndex) => {
+            const img = images[origIndex];
+            const isSelected = selected === origIndex;
+            const select = img.selectable
+              ? () => setAnswers((a) => ({ ...a, [page.id]: origIndex }))
+              : undefined;
+            return (
+              <figure key={origIndex} className="flex flex-col items-center gap-2">
+                <img
+                  src={img.src}
+                  alt={img.alt ?? ""}
+                  onClick={select}
+                  className={[
+                    img.sizeClass ?? imgSize,
+                    "rounded-lg border-2 bg-white object-contain",
+                    img.selectable ? "cursor-pointer" : "",
+                    isSelected
+                      ? "border-blue-800 ring-2 ring-blue-800"
+                      : "border-transparent",
+                  ].join(" ")}
+                />
+                {/* Reserve the caption slot for the bag images (even when the
+                    caption is absent) so they stay aligned across pages; other
+                    images get no caption line. */}
+                {img.src.includes("bag") && (
+                  <figcaption className="text-base text-black/70">
+                  {img.caption ?? " "}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          })}
+        </div>
+      )}
+
+      {/*
+        Fixed-height control slot. The waiting bar and the Next button both
+        live here, one visible at a time, so swapping between them never
+        shifts the content above.
+      */}
+      <div className={`flex h-16 items-center justify-center ${images.length === 0 ? "mt-auto" : ""}`}>
+        {canContinue ? (
+          page.link ? (
+            <a
+              href={page.link.url}
+              className="rounded-lg bg-blue-800 px-6 py-3 text-lg text-white"
+            >
+              {page.link.label}
+            </a>
+          ) : (
+            <button
+              onClick={handleNext}
+              disabled={isLast || saving}
+              className="rounded-lg bg-blue-800 px-6 py-3 text-lg text-white disabled:opacity-50"
+            >
+              {isLast
+                ? "Done"
+                : saving
+                  ? "Saving…"
+                  : saveFailed
+                    ? "Couldn’t save — try again"
+                    : "Next"}
+            </button>
+          )
+        ) : (
+          <div className="flex w-64 flex-col items-center gap-2">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-black/10">
+              <div
+                className="h-full bg-blue-800 transition-[width] duration-100"
+                style={{ width: `${progress * 100}%` }}
+              />
+            </div>
+            {/* Always rendered to reserve its height; toggled via visibility. */}
+            <p
+              className={`text-sm text-black/60 ${
+                waitDone && needsAnswer ? "" : "invisible"
+              }`}
+            >
+              Select a graph to continue.
+            </p>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
