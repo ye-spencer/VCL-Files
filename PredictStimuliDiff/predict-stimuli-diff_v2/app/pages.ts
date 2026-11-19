@@ -70,7 +70,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "imagine",
-    text: "For each comparison, imagine attempting to do the trial yourself and decide “how often will I say that I know which one is heavier”).",
+    text: "For each comparison, imagine attempting to do the trial yourself and decide “how often will I say that I know which one is heavier.”",
     images: [{ src: "/D_V1.png", alt: "Empty graph axes" }],
     waitSeconds: 5,
   },
@@ -88,7 +88,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "preview",
-    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts. We’ll show you 2 possible graphs.",
+    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 2 possible graphs.",
     images: [
       { src: "/G_V1.png", alt: "Graph with only the easiest and hardest trials marked", sizeClass: "max-h-[55vh] w-auto" },
       { src: "/H_V1.png", alt: "Graph with only the easiest and hardest trials marked", sizeClass: "max-h-[55vh] w-auto" },
@@ -98,7 +98,7 @@ export const PAGES: Page[] = [
   },
   {
     id: "question",
-    text: "For each comparison dot, how often will say that you know which one is heavier? Which pattern do you feel is most likely to match the actual performance of regular human participants (choose one).",
+    text: "For each comparison dot, how often will you say that you know which one is heavier? Which pattern do you feel is most likely to match the actual performance of regular human participants (choose one).",
     images: [
       { src: "/I_V1.png", alt: "Candidate graph 1", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
       { src: "/J_V1.png", alt: "Candidate graph 2", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
