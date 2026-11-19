@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
-// Experiment definition — content transcribed from SlideDesign.pptx, using the
-// slide screenshots in /public.
+// Experiment definition — content transcribed from experiment_b.pdf, using the
+// slide captures in /public (*_V1.png).
 //
 // Add / remove / reorder objects in the `PAGES` array to change the
 // experiment. The number of pages is whatever you put here.
@@ -36,74 +36,72 @@ export const PROLIFIC_RETURN_URL = "https://app.prolific.com/submissions/complet
 export const PAGES: Page[] = [
   {
     id: "intro",
-    text: "For this question, your job will be to consider the likely results of a psychology experiment.",
+    text: "For this question, your job will be to reflect on what it feels like to know that one bag of sand is heavier than another.",
     waitSeconds: 3.75,
   },
   {
     id: "task",
-    text: "Imagine that 100 regular people are asked to judge which of two bags of sand is heavier, just by feeling the weight of the bags in their hands with their eyes closed.",
-    images: [
-      { src: "/bag_left.png", alt: "A bag of sand" },
-      { src: "/bag_right.png", alt: "A bag of sand" },
-    ],
+    text: "Imagine that you are asked to judge which of two bags of sand is heavier, just by feeling the weight of the bags in your hands with your eyes closed.",
+    images: [{ src: "/A_V1.png", alt: "Two bags of sand" }],
     waitSeconds: 5,
   },
   {
     id: "grains",
     text: "The creators of the experiment have a “sand grain counter” and will use the numbers of grains of sand as a stand-in for the weight of each bag.",
-    images: [
-      { src: "/bag_left.png", alt: "A bag of sand", caption: "4000 grains of sand" },
-      { src: "/bag_right.png", alt: "A bag of sand", caption: "6000 grains of sand" },
-    ],
+    images: [{ src: "/B_V1.png", alt: "Two bags of sand: 5000 grains of sand and 6000 grains of sand" }],
     waitSeconds: 5,
   },
   {
     id: "five-graphs",
-    text: "You will be presented with 2 different graphs that show the possible outcomes from many such comparisons and your job will be to decide which one appears to be the correct graph.",
+    text: "You will be presented with 2 different graphs that show the possible outcomes from many such comparisons and your job will be to decide which one appears to be the correct graph for you.",
     waitSeconds: 5,
   },
   {
     id: "x-axis",
     text: "In each of the figures you will see, the bottom axis shows the numbers of grains to be compared. The easiest trials appear on the right (e.g., 6000 versus 4000 grains of sand) and the hardest trials on the left (e.g., 6000 versus 6001 grains of sand) with some relevant trials noted in between (e.g., 6000 versus 5600 grains of sand).",
-    images: [{ src: "/A.png", alt: "The horizontal axis of comparisons" }],
+    images: [{ src: "/C_V1.png", alt: "The horizontal axis of comparisons" }],
     waitSeconds: 6.25,
   },
   {
     id: "y-axis",
-    text: "The vertical axis will show the number of people, out of 100, who will choose the correct bag of sand (i.e., with their eyes closed, will be able to feel which bag is heavier).",
-    images: [{ src: "/B.png", alt: "Empty graph axes" }],
+    text: "The vertical axis will show how often you feel that “I know which one is heavier” (that is, for each type of comparison, how often would you say that you know which one is heavier).",
+    images: [{ src: "/D_V1.png", alt: "Empty graph axes" }],
     waitSeconds: 6.25,
   },
   {
     id: "imagine",
-    text: "For each comparison, imagine attempting to do the trial yourself and decide “how many people out of 100 will choose the correct bag of sand.”",
-    images: [{ src: "/B.png", alt: "Empty graph axes" }],
+    text: "For each comparison, imagine attempting to do the trial yourself and decide “how often will I say that I know which one is heavier”).",
+    images: [{ src: "/D_V1.png", alt: "Empty graph axes" }],
     waitSeconds: 5,
   },
   {
     id: "anchor-easy",
-    text: "The creators of the experiment have provided two values to guide us. For the easiest trial (e.g., 6000 vs 4000), the creators estimate that “99 people out of 100 will get this correct” – because this trial is easy enough that nearly all people will successfully feel which bag is heavier.",
-    images: [{ src: "/C.png", alt: "Graph with the easiest trial marked “Getting it Right!”" }],
+    text: "The creators of the experiment have provided two values to guide us. For the easiest trial (e.g., 6000 vs 4000), the creators estimate that “99 times out of 100 people will say they know which one is heavier” – because this trial is easy enough that nearly all people will successfully feel which bag is heavier.",
+    images: [{ src: "/E_V1.png", alt: "Graph with the easiest trial marked “I Totally Know”" }],
     waitSeconds: 6.25,
   },
   {
     id: "anchor-hard",
-    text: "For the hardest trial (e.g., 6000 vs 6001), the creators estimate that “51 people out of 100 will get this correct” – because this trial is so difficult that people are very close to chance performance. Notice that guessing would result in getting it correct half the time (just by chance) and getting it wrong half of the time – this is why the worst performance is at 50 people out of 100.",
-    images: [{ src: "/D.png", alt: "Graph with the hardest trial marked “At Chance!”" }],
+    text: "For the hardest trial (e.g., 6000 vs 6001), the creators estimate that “1 time out of 100 people will say that they know which one is heavier” – because this trial is so difficult.",
+    images: [{ src: "/F_V1.png", alt: "Graph with the hardest trial marked “I Don’t Know!”" }],
     waitSeconds: 6.25,
   },
   {
     id: "preview",
-    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts? We’ll show you 2 possible graphs.",
-    images: [{ src: "/E.png", alt: "Graph with only the easiest and hardest trials marked" }],
+    text: "Now, imagine all of the possible combinations in between these two values. How do you expect the figure to look after many experimental trials of these sorts. We’ll show you 2 possible graphs.",
+    images: [
+      { src: "/G_V1.png", alt: "Graph with only the easiest and hardest trials marked", sizeClass: "max-h-[55vh] w-auto" },
+      { src: "/H_V1.png", alt: "Graph with only the easiest and hardest trials marked", sizeClass: "max-h-[55vh] w-auto" },
+    ],
+    gapClass: "gap-16",
     waitSeconds: 5,
   },
   {
     id: "question",
-    text: "For each comparison dot, how many people out of 100 will choose the correct bag? Which pattern do you feel is the most likely to match the actual performance of regular human participants (choose one).",
+    text: "For each comparison dot, how often will say that you know which one is heavier? Which pattern do you feel is most likely to match the actual performance of regular human participants (choose one).",
     images: [
-      { src: "/G.png", alt: "Candidate graph 1", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
-      { src: "/H.png", alt: "Candidate graph 2", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
+      { src: "/I_V1.png", alt: "Candidate graph 1", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
+      { src: "/J_V1.png", alt: "Candidate graph 2", selectable: true, sizeClass: "max-h-[55vh] w-auto" },
     ],
     gapClass: "gap-16",
     waitSeconds: 10,
